@@ -25,7 +25,7 @@ public class DominoOneDim {
 		ArrayList<Integer> max_values = new ArrayList<Integer>();
 		
 		known_id.forEach((key, value) -> {
-			System.out.print("\nklucz " + key + " wartoœci: ");
+			System.out.print("\nklucz " + key + " wartosci: ");
 			
 			for(int i = 0; i < value.size(); i++)
 				System.out.print(value.get(i) + " ");
@@ -56,7 +56,7 @@ public class DominoOneDim {
 				max_common_seq_horizontal = max_values.get(i);
 		}
 			
-		System.out.println("Znaleziono rozmiar maksymalnej powtórzonej podsekwencji w osi X: " + max_common_seq_horizontal + " oraz w osi Y: " + max_common_seq_vertical);
+		System.out.println("Znaleziono rozmiar maksymalnej powtorzonej podsekwencji w osi X: " + max_common_seq_horizontal + " oraz w osi Y: " + max_common_seq_vertical);
 
 		if (max_common_seq_vertical < yAxissAmount) max_common_seq_vertical++;  //subsequences become deterministic when their length >= K + 2 and lesser than axiss length, K is the greatest repeated subsequence in sequence
 		if (max_common_seq_horizontal < xAxissAmount) max_common_seq_horizontal++;
@@ -84,7 +84,7 @@ public class DominoOneDim {
 					vertical_subseq_set.add(new PieceSequence(subseq, false));
 				}
 		
-		System.out.println("Pocz¹tkowa sekwencja zosta³a podzielona na : " + horizontal_subseq_set.size() + " elementów w osi X oraz :" + vertical_subseq_set.size()+ " elementów w osi Y");
+		System.out.println("Poczatkowa sekwencja zostala podzielona na : " + horizontal_subseq_set.size() + " elementow w osi X oraz :" + vertical_subseq_set.size()+ " elementow w osi Y");
 		System.out.println("Podsekwencje poziome: ");
 		
 		for(int i=0; i < horizontal_subseq_set.size(); i++) {
@@ -256,7 +256,7 @@ public class DominoOneDim {
 				
 			}
 		
-		System.out.println("Sekwencja zosta³a u³o¿one w : " + horizontal_subseq_ready_set.size() + " wierszy oraz :" + vertical_subseq_ready_set.size()+ " kolumn");
+		System.out.println("Sekwencja zostala ulozone w : " + horizontal_subseq_ready_set.size() + " wierszy oraz :" + vertical_subseq_ready_set.size()+ " kolumn");
 		System.out.println("Wiersze: ");
 		
 		for(int i = 0; i < horizontal_subseq_ready_set.size(); i++) {
@@ -443,7 +443,7 @@ public class DominoOneDim {
 				}
 			}
 		
-		System.out.print("\nOtrzymano wynikow¹ sekwencjê: ");
+		System.out.print("\nOtrzymano wynikowa sekwencje: ");
 		for(int i = 0; i < yAxissAmount; i++) {
 			System.out.print("\n");
 			for(int j = 0; j < xAxissAmount; j++) {
@@ -457,9 +457,9 @@ public class DominoOneDim {
 		
 		int rezult = SolvedTableCheck(solved_table, solution_table);
 		if(rezult == 0)
-			System.out.println("Sekwencje s¹ zgodne");
+			System.out.println("Sekwencje sa zgodne");
 		else
-			System.out.println("Pope³niono w procesie " + rezult + " b³êdów");
+			System.out.println("Popelniono w procesie " + rezult + " bledow");
 	}
 	
 	private static int SimilarSeqLengthHoriz(ArrayList<Integer> positions, int xAxissAmount, int yAxissAmount, Piece[][] solution_table) {
@@ -556,7 +556,7 @@ public class DominoOneDim {
 	private static int SolvedTableCheck(Piece[][] solved_table, Piece[][] solution_table) {
 		int error_counter = 0;
 		if (solved_table.length != solution_table.length || solved_table[0].length != solution_table[0].length)
-				throw new IllegalArgumentException("Sekwencja rozwi¹zania nie jest to¿sama z zadan¹ sekwencj¹ pod k¹tem wymiarów!");
+				throw new IllegalArgumentException("Sekwencja rozwiazania nie jest tozsama z zadana sekwencja pod katem wymiarow!");
 
 		for(int x = 0; x < solution_table.length; x++)
 			for(int y = 0; y < solution_table[0].length; y++) {

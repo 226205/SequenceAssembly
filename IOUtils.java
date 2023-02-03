@@ -8,7 +8,7 @@ import java.io.PushbackReader;
 
 
 /*
- * Klasa agreguj¹ca procedury do zapisu i odczytu testowanych sekwencji
+ * Klasa agregujaca procedury do zapisu i odczytu testowanych sekwencji
  * 
  */
 
@@ -66,7 +66,7 @@ public class IOUtils extends PushbackReader
 	private static void handleException(Exception e)
 	{
 		System.err.println("Exception:" + e);
-		System.err.println("IOUtils zatrzyma³ program, wyst¹pi³ niespodziewany b³¹d");
+		System.err.println("IOUtils zatrzymal program, wystapil niespodziewany blad");
 		System.exit(0);
 	}
 

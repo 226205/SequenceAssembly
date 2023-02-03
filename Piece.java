@@ -1,7 +1,3 @@
-
-/*
- * Class of single sequence piece component
- */
 public class Piece {
 	private int id; // id number
 	private int x_axis; // X axiss position in start sequence

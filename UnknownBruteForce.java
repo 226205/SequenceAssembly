@@ -55,7 +55,7 @@ public class UnknownBruteForce {
 			if(counter == local_piece_list.size()) counter = 0;
 		}
 			
-		System.out.print("\nOtrzymano wynikow¹ sekwencjê: ");
+		System.out.print("\nOtrzymano wynikowa sekwencje: ");
 		for(int i = 0; i < yAxissAmount; i++) {
 			System.out.print("\n");
 			for(int j = 0; j < xAxissAmount; j++) {
@@ -69,15 +69,15 @@ public class UnknownBruteForce {
 
 		int rezult = SolvedTableCheck(solved_table, solution_table);
 		if(rezult == 0)
-			System.out.println("Sekwencje s¹ zgodne");
+			System.out.println("Sekwencje sa zgodne");
 		else
-			System.out.println("Pope³niono w procesie " + rezult + " b³êdów");
+			System.out.println("Popelniono w procesie " + rezult + " b³edow");
 	}
 	
 	private static int SolvedTableCheck(Piece[][] solved_table, Piece[][] solution_table) {
 		int error_counter = 0;
 		if (solved_table.length != solution_table.length || solved_table[0].length != solution_table[0].length)
-				throw new IllegalArgumentException("Sekwencja rozwi¹zania nie jest to¿sama z zadan¹ sekwencj¹ pod k¹tem wymiarów!");
+				throw new IllegalArgumentException("Sekwencja rozwiazania nie jest tozsama z zadana sekwencja pod katem wymiarow!");
 
 		for(int x = 0; x < solution_table.length; x++)
 			for(int y = 0; y < solution_table[0].length; y++) {
