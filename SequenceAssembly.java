@@ -20,7 +20,7 @@ public class SequenceAssembly {
 	static boolean all_pieces_unique, all_pieces_sequence, all_pieces_known;
 	static Piece[][] solution_table;;
 
-	final static String[] algoritm_names = { "Brute Force - zwykle puzzle", "Brute Force - znane puzzle", "Domino - deterministyczne subseq 1D", "DNA - DeBrujin"};
+	final static String[] algoritm_names = { "Brute Force - plain puzzles", "Brute Force - known puzzles", "Domino - deterministic subseq 1D", "DNA - DeBrujin"};
 	
 	private static void s_menu(Scanner scanner) {
 		
@@ -31,15 +31,15 @@ public class SequenceAssembly {
 		
 		//first menu of sequence possessing mode
 		while(true){
-			System.out.println("Wybierz tryb pracy:\n"
-					+ "1: Wczytaj plik sekwencji razem z ustawieniami\n"
-					+ "2: Podaj nowe ustawienia i stworz sekwencje na ich podstawie\n"
-					+ "0: Wylacz program");
+			System.out.println("Choose operating mode:\n"
+					+ "1: Load sequence file with predefined settings\n"
+					+ "2: Set new setting and create sequences based on these\n"
+					+ "0: Quit");
 	
 			input = scanner.nextLine();
 			
 			if (input.length() == 0 || input.matches("\\d+") == false || Arrays.asList(0, 1, 2).contains(Integer.parseInt(input)) == false) {
-				System.out.println("\"" + input + "\" opcja o tym numerze nie istnieje");
+				System.out.println("\"" + input + "\" Option for a given number does not exist, try again.");
 				continue;
 			}
 			break;
@@ -50,46 +50,46 @@ public class SequenceAssembly {
 		{
 			preconfig = false;
 			
-			dimension_amount = intQuery(scanner, "Czy generowana sekwencja ma byc 1d / 2d? (przyjmowane wartosci: '1', '2')", 2);
-			xAxissAmount = intQuery(scanner, "Podaj szerokosc calej tablicy elementow sekwencji (przyjmowane wartosci: liczby naturalne >= 1)", Integer.MAX_VALUE);
+			dimension_amount = intQuery(scanner, "Press 1 for 1D sequence, 2 for 2D sequence: ", 2);
+			xAxissAmount = intQuery(scanner, "Enter the width of table with elements of seqence (possible input: natural numbers >= 1): ", Integer.MAX_VALUE);
 			if (dimension_amount == 2) 
-				yAxissAmount = intQuery(scanner, "Podaj dlugosc calej tablicy elementow sekwencji (przyjmowane wartosci: liczby naturalne >= 1)", Integer.MAX_VALUE);
-			all_pieces_unique = boolQuery(scanner, "Czy elementy sa unikalne (nie moga sie powtorzyc)? (przyjmowane wartosci: tak - '1', nie - '2')");
+				yAxissAmount = intQuery(scanner, "Enter the length of table with elements of seqence (possible input: natural numbers >= 1): ", Integer.MAX_VALUE);
+			all_pieces_unique = boolQuery(scanner, "Press 1 for unique elements, 2 for non-unique");
 			if (all_pieces_unique == true)				
-				all_pieces_known = boolQuery(scanner, "Czy poszczegolne elementy sekwencji sa znane (posiadamy informacje, ze na pozycji [n][m] wystapi element X)? (przyjmowane wartosci: tak - '1', nie - '2')");
+				all_pieces_known = boolQuery(scanner, "Press 1 for specified elements (is it known that in position [n][m] occurs X?), 2 for not specified:))");
 			else all_pieces_known = true;
-			all_pieces_sequence = boolQuery(scanner, "Czy cala tablica ma siê skladac z wylacznie jednej sekwencji? (przyjmowane wartosci: tak - '1', nie - '2')");
+			all_pieces_sequence = boolQuery(scanner, "Press 1 for table containing only one sequence, 2 for table with many sequences: ");
 			if (all_pieces_sequence == false)
-				xAxissSequenceLength = intQuery(scanner, "Podaj szerokosc pojedynczej sekwencji (przyjmowane wartosci: liczby naturalne >= 1)", Integer.MAX_VALUE);
+				xAxissSequenceLength = intQuery(scanner, "Enter the width of entered sequence (possible input: natural numbers >= 1)", Integer.MAX_VALUE);
 			else xAxissSequenceLength = xAxissAmount;
 			if (all_pieces_sequence == false && dimension_amount == 2)
-				yAxissSequenceLength = intQuery(scanner, "Podaj dlugosc pojedynczej sekwencji (przyjmowane wartosci: liczby naturalne >= 1)", Integer.MAX_VALUE);
+				yAxissSequenceLength = intQuery(scanner, "Enter the length of entered sequence (possible input: natural numbers >= 1)", Integer.MAX_VALUE);
 			else yAxissSequenceLength = yAxissAmount;
 			if (all_pieces_unique == false)
-				all_pieces_amount = intQuery(scanner, "Podaj ilosc unikalnych elementow w sekwencji (przyjmowane wartosci: liczby naturalne >= 1; sekwencja zawiera maksymalnie " + xAxissSequenceLength * yAxissSequenceLength + " elementow", xAxissSequenceLength * yAxissSequenceLength);
+				all_pieces_amount = intQuery(scanner, "Enter the quantity of unique elements in sequence (possible input: natural numbers >= 1; sequence contains maximum " + xAxissSequenceLength * yAxissSequenceLength + " elements", xAxissSequenceLength * yAxissSequenceLength);
 			else all_pieces_amount = xAxissSequenceLength * yAxissSequenceLength;
 
 		}
 
 		while(true) {
-			System.out.println("Podaj nazwê pliku sekwencji (bez rozszerzenia .txt): ");
+			System.out.println("Type name of seqence file (without.txt extension): ");
 			file_name = scanner.nextLine();
 			
 			if(IOUtils.fileExist("src/"+ file_name + ".txt") == -1){
-				System.out.println("Plik istnieje, ale system nie moze go odczytac! Sprobuj uzyc innego pliku.");
+				System.out.println("File already exists, but it can't be opened. Try using other file.");
 				continue;
 			}
 				
 			
 			if(preconfig && IOUtils.fileExist("src/"+ file_name + ".txt") == 0) {
-				System.out.println("Plik o podanej nazwie nie istnieje, sprobuj ponownie!");
+				System.out.println("File with a given name does not exist, try again.");
 				continue;
 			}
 
 			if(!preconfig) {
 				if(IOUtils.fileExist("src/"+ file_name + ".txt") == 1)
 					while(true) {
-						System.out.println("Plik o podanej nazwie juz istnieje, czy nadpisac? (przyjmowane wartosci: tak - '1', nie - '2')");
+						System.out.println("File already exists, overwrite? (yes - '1', no - '2')");
 						input = scanner.nextLine();
 						if (input.length() != 0 && input.matches("\\d+") && Integer.parseInt(input) == 1 ) {
 							piece_list = s_WriteToFile("src/"+ file_name + ".txt");
@@ -97,10 +97,10 @@ public class SequenceAssembly {
 						}
 						else if (input.length() != 0 && input.matches("\\d+") && Integer.parseInt(input) == 2 ) 
 							break;
-						System.out.println("Opcja o tym numerze nie istnieje, sprobuj ponownie!");
+						System.out.println("Option for a given number does not exist, try again.");
 					}
 				if (IOUtils.fileExist("src/"+ file_name + ".txt") == -1 ) {
-					System.out.println("Plik niemozliwy do odczytu, wybierz ponownie!");
+					System.out.println("File can't be read. Try again.");
 					continue;
 				}
 				else
@@ -126,11 +126,11 @@ public class SequenceAssembly {
 		}
 		
 		while(true) {
-			System.out.println("\nMenu wyboru algorytmu oraz ilosci powtorzen. Aktualne wartosci:"
-					+ "\n1. Rozpocznij pracê"
-					+ "\n2. Zmien algorytm (aktualnie wybrany algorytm: " + algoritm_names[algoritm_nbr] + ")"
-					+ "\n3. Zmien ilosc powtorzen (aktualna ilosc powtorzen: " + repetition_amt +")"
-					+ "\n0. Zakoncz pracê aplikacji");
+			System.out.println("\nChoose algorithm and enter quantity of repetitions. Current values:"
+					+ "\n1. Begin algorithm"
+					+ "\n2. Change algorithm (currently chosen algorithm): " + algoritm_names[algoritm_nbr] + ")"
+					+ "\n3. Change quantity of repetitions (current quantity of repetitions: " + repetition_amt +")"
+					+ "\n0. Quit application.");
 			input = scanner.nextLine();
 			if (input.length() != 0 && input.matches("\\d+") && Arrays.asList(1, 2, 3, 0).contains(Integer.parseInt(input)) ) {
 				switch (Integer.parseInt(input)) {
@@ -139,10 +139,10 @@ public class SequenceAssembly {
 						break;
 					case 2:
 						while(true) {
-							System.out.println("Menu wyboru algorytmu:");
+							System.out.println("Choose algorithm:");
 							for (int i = 0; i < algoritm_names.length; i++)
 								System.out.println((i+1) + ". " + algoritm_names[i]);
-							System.out.println("0. Cofnij bez zmian");
+							System.out.println("0. Go back without saving");
 							input = scanner.nextLine();
 							if (input.length() != 0 && input.matches("\\d+") && Integer.parseInt(input) >= 0  && Integer.parseInt(input) <= algoritm_names.length) {
 								if(Integer.parseInt(input) == 0) break;      //{ "Brute Force - common jigsaw puzzle", "Brute Force - known puzzle", "Domino - deterministic subseq 1D", "DNA - DeBrujin"};
@@ -150,15 +150,15 @@ public class SequenceAssembly {
 								else if(Integer.parseInt(input) == 2 && all_pieces_known == true) {algoritm_nbr = Integer.parseInt(input) - 1; break;}
 								else if(Arrays.asList(3).contains(Integer.parseInt(input)) && all_pieces_sequence == true) {algoritm_nbr = Integer.parseInt(input) - 1; break;}
 								else if(Arrays.asList(4).contains(Integer.parseInt(input)) && all_pieces_sequence == true) {algoritm_nbr = Integer.parseInt(input) - 1; break;}
-								else System.out.println("Opcja o tym numerze jest niedostêpna dla podanych parametrow sekwencji, wybierz inna! Poprzedni wybor nie zostal zmieniony.");
+								else System.out.println("Option for a given number does not exist with current parameters, try again. Previous choice is still the same.");
 							}
 							else
-								System.out.println("Opcja o tym numerze nie istnieje, sprobuj ponownie");
+								System.out.println("Option for a given number does not exist, try again.");
 						}
 						break;
 					case 3:
 						while(true) {
-							System.out.println("Menu wyboru ilosci powtorzen: (0 Aby cofnac bez zmian, max 99)");
+							System.out.println("Enter the number of repetitions: (max 99, 0 to quit without change of setting)");
 							input = scanner.nextLine();
 							if (input.length() != 0 && input.matches("\\d+") && Integer.parseInt(input) > 0 && Integer.parseInt(input) <= 99) {
 								repetition_amt = Integer.parseInt(input);
@@ -167,11 +167,11 @@ public class SequenceAssembly {
 							else if ((input.length() != 0 && input.matches("\\d+")) && Integer.parseInt(input) == 0)
 								break;
 							else if ((input.length() != 0 && input.matches("\\d+")) && Integer.parseInt(input) < 0 || (input.length() != 0 && input.matches("\\d+")) && Integer.parseInt(input) > 99) {
-								System.out.println("Wybrana wartosc nie miesci siê w zakresie. Obslugiwany zakres to od 1 do 99. Sprobuj ponownie");
+								System.out.println("Entered value is outside of scope. Supported scope is from 1 to 99. Try again.");
 								continue;
 							}
 							else
-								System.out.println("Opcja o tym numerze nie istnieje, sprobuj ponownie!");
+								System.out.println("Option for a given number does not exist, try again.");
 						}
 						break;
 					case 0:
@@ -180,7 +180,7 @@ public class SequenceAssembly {
 					
 			}
 			else
-				System.out.println("Opcja o tym numerze nie istnieje, sprobuj ponownie!");
+				System.out.println("Option for a given number does not exist, try again.");
 		}
 	
 	}
@@ -199,7 +199,7 @@ public class SequenceAssembly {
 				else var = false;
 				break;
 			}
-			System.out.println("Opcja o tym numerze nie istnieje, sprobuj ponownie!");
+			System.out.println("Option for a given number does not exist, try again.");
 		}
 		
 		return var;
@@ -219,10 +219,10 @@ public class SequenceAssembly {
 				break;
 			}
 			else if ((input.length() != 0 && input.matches("\\d+")) && Integer.parseInt(input) <= 0 || (input.length() != 0 && input.matches("\\d+")) && Integer.parseInt(input) > max_var) {
-				System.out.println("Wybrana wartosc nie miesci siê w zakresie. Obslugiwany zakres to od 1 do " + max_var + ". Sprobuj ponownie");
+				System.out.println("Entered value is outside of scope. Supported scope is from 1 to " + max_var + ". Try again.");
 				continue;
 			}
-			System.out.println("Opcja o tym numerze nie istnieje, sprobuj ponownie!");
+			System.out.println("Option for a given number does not exist, try again.");
 		}
 		return var;
 	}
@@ -235,7 +235,7 @@ public class SequenceAssembly {
 		Timestamp start_dt = new Timestamp(System.currentTimeMillis()), iteration_dt = new Timestamp(System.currentTimeMillis()), end_dt = new Timestamp(System.currentTimeMillis());
 		ArrayList<Piece> local_piece_list;
 		
-		System.out.println("Rozpoczynam pracê");
+		System.out.println("Starting");
 		
 		
 		for (int i = 0; i < repetition_amt; i++) {
@@ -266,10 +266,10 @@ public class SequenceAssembly {
 
 		timestamps_diff = end_dt.getTime() - start_dt.getTime();
 		
-		System.out.println("Zakonczylem pracê. Wykonalem algorytm: " + algoritm_names[algoritm_nbr] + " na podstawie pliku: " + file_name + ".txt"
-				+ "\nCzas rozpoczêcia: " + start_dt
-				+ "\nCzas zakonczenia: " + end_dt
-				+ "\nlaczny czas wykonywania: " + timestamps_diff + "ms");
+		System.out.println("Work finished. Algorithm used: " + algoritm_names[algoritm_nbr] + " based on file: " + file_name + ".txt"
+				+ "\nBegin timestamp: " + start_dt
+				+ "\nFinish timestamp: " + end_dt
+				+ "\nExecution time: " + timestamps_diff + "ms");
 
 	}
 
@@ -279,7 +279,7 @@ public class SequenceAssembly {
 		String csv_line;
 		IOUtils stdin = new IOUtils(file_name);
 		int[] delimiter_index = new int[8];
-		int[] id_neighbour = new int[4];
+		int[] id_neighbor = new int[4];
 		int id, x, y;
 		ArrayList<Piece> piece_list = new ArrayList<Piece>();
 		csv_line = stdin.stringInputLine();
@@ -306,7 +306,7 @@ public class SequenceAssembly {
 			all_pieces_known = Boolean.parseBoolean(csv_line.substring(delimiter_index[7]+1));
 			
 		} catch (Exception e) {
-			System.out.println("Nie udalo siê odczytac parametrow z pliku");
+			System.out.println("Unable to read parameters from file.");
 			System.exit(0);
 		}
 		
@@ -327,16 +327,16 @@ public class SequenceAssembly {
 				id = Integer.parseInt(csv_line.substring(0,delimiter_index[0]));
 				x = Integer.parseInt(csv_line.substring(delimiter_index[0]+1,delimiter_index[1]));
 				y = Integer.parseInt(csv_line.substring(delimiter_index[1]+1,delimiter_index[2]));
-				id_neighbour[0] = Integer.parseInt(csv_line.substring(delimiter_index[2]+1,delimiter_index[3]));
-				id_neighbour[1] = Integer.parseInt(csv_line.substring(delimiter_index[3]+1,delimiter_index[4]));
-				id_neighbour[2] = Integer.parseInt(csv_line.substring(delimiter_index[4]+1,delimiter_index[5]));
-				id_neighbour[3] = Integer.parseInt(csv_line.substring(delimiter_index[5]+1));
+				id_neighbor[0] = Integer.parseInt(csv_line.substring(delimiter_index[2]+1,delimiter_index[3]));
+				id_neighbor[1] = Integer.parseInt(csv_line.substring(delimiter_index[3]+1,delimiter_index[4]));
+				id_neighbor[2] = Integer.parseInt(csv_line.substring(delimiter_index[4]+1,delimiter_index[5]));
+				id_neighbor[3] = Integer.parseInt(csv_line.substring(delimiter_index[5]+1));
 
-				solution_table[x][y] = new Piece(id, x, y, id_neighbour);
+				solution_table[x][y] = new Piece(id, x, y, id_neighbor);
 				piece_list.add(solution_table[x][y]);
 				
 			} catch (Exception e) {
-				System.out.println("Nie udalo siê odczytac obiektow z pliku. Wczytano jedynie " + piece_list.size() + " zamiast " + xAxissAmount * yAxissAmount);
+				System.out.println("Loading objects from file failed. Loaded only " + piece_list.size() + " instead of " + xAxissAmount * yAxissAmount);
 				System.exit(0);
 			}
 
@@ -349,17 +349,17 @@ public class SequenceAssembly {
 				break;
 		}
 
-		System.out.println("Pomyslnie wczytano plik z sekwencja i parametrami.\n"
-				+ "Wczytane parametry:"
-				+ "\n   Szerokosc tablicy = " + xAxissAmount
-				+ "\n   Dlugosc tablicy = " + yAxissAmount
-				+ "\n   Szerokosc pojedynczej sekwencji = " + xAxissSequenceLength
-				+ "\n   Dlugosc pojedynczej sekwencji = " + yAxissSequenceLength
-				+ "\n   Ilosc wymiarow = " + dimension_amount
-				+ "\n   Ilosc unikalnych elementow = " + all_pieces_amount
-				+ "\n   Brak powtorzenia elementow = " + all_pieces_unique
-				+ "\n   Pojedyncza sekwencja w tablicy = " + all_pieces_sequence
-				+ "\n   Znana pozycja poszczegolnych elementow = " + all_pieces_known);
+		System.out.println("Successfully loaded file with seqence and parametrs.\n"
+				+ "Loaded parameters:"
+				+ "\n   Width of table = " + xAxissAmount
+				+ "\n   Length of table = " + yAxissAmount
+				+ "\n   Width of single sequence = " + xAxissSequenceLength
+				+ "\n   Length of single sequence = " + yAxissSequenceLength
+				+ "\n   Quantity of dimensions = " + dimension_amount
+				+ "\n   Quantity of unique elements = " + all_pieces_amount
+				+ "\n   Unique elements = " + all_pieces_unique
+				+ "\n   Single sequence in table = " + all_pieces_sequence
+				+ "\n   Known position of particular elements = " + all_pieces_known);
 		
 		try {
 			stdin.close();
@@ -378,7 +378,7 @@ public class SequenceAssembly {
 		Random rand = new Random();
 		PrintWriter seqFile = IOUtils.makeFileWriter(file_name);
 		solution_table = new Piece[xAxissAmount][yAxissAmount];
-		int[] id_neighbour = new int[4];
+		int[] id_neighbor = new int[4];
 		ArrayList<Piece> piece_list = new ArrayList<Piece>();
 		
 		seqFile.println(dimension_amount + ";" + all_pieces_amount + ";" + xAxissAmount + ";" + yAxissAmount + ";" 
@@ -400,35 +400,35 @@ public class SequenceAssembly {
 		for (int x = 0; x < xAxissAmount; x++)
 			for (int y = 0; y < yAxissAmount; y++) {
 				if(y == 0) 
-					id_neighbour[0] = 0;
+					id_neighbor[0] = 0;
 				else if (y % yAxissSequenceLength == 0) 
-					id_neighbour[0] = randomId.get((yAxissSequenceLength - 1) * xAxissSequenceLength - (x % xAxissSequenceLength));
+					id_neighbor[0] = randomId.get((yAxissSequenceLength - 1) * xAxissSequenceLength - (x % xAxissSequenceLength));
 				else 
-					id_neighbour[0] = randomId.get((x % xAxissSequenceLength) + (y % yAxissSequenceLength) * xAxissSequenceLength - xAxissSequenceLength);
+					id_neighbor[0] = randomId.get((x % xAxissSequenceLength) + (y % yAxissSequenceLength) * xAxissSequenceLength - xAxissSequenceLength);
 				if(y == yAxissAmount - 1) 
-					id_neighbour[1] = 0;
+					id_neighbor[1] = 0;
 				else if (y % yAxissSequenceLength == yAxissSequenceLength - 1) 
-					id_neighbour[1] = randomId.get(x % xAxissSequenceLength);
+					id_neighbor[1] = randomId.get(x % xAxissSequenceLength);
 				else 
-					id_neighbour[1] = randomId.get((x % xAxissSequenceLength) + (y % yAxissSequenceLength) * xAxissSequenceLength + xAxissSequenceLength);	
+					id_neighbor[1] = randomId.get((x % xAxissSequenceLength) + (y % yAxissSequenceLength) * xAxissSequenceLength + xAxissSequenceLength);	
 				
 				if(x == 0) 
-					id_neighbour[2] = 0;
+					id_neighbor[2] = 0;
 				else if (x % xAxissSequenceLength == 0) 
-					id_neighbour[2] = randomId.get((y % yAxissSequenceLength) * xAxissSequenceLength + xAxissSequenceLength - 1);
+					id_neighbor[2] = randomId.get((y % yAxissSequenceLength) * xAxissSequenceLength + xAxissSequenceLength - 1);
 				else 
-					id_neighbour[2] = randomId.get((y % yAxissSequenceLength) * xAxissSequenceLength + (x % xAxissSequenceLength) - 1);
+					id_neighbor[2] = randomId.get((y % yAxissSequenceLength) * xAxissSequenceLength + (x % xAxissSequenceLength) - 1);
 				if(x == xAxissAmount - 1) 
-					id_neighbour[3] = 0;
+					id_neighbor[3] = 0;
 				else if (x % xAxissSequenceLength == xAxissSequenceLength - 1) 
-					id_neighbour[3] = randomId.get((y % yAxissSequenceLength) * xAxissSequenceLength);
+					id_neighbor[3] = randomId.get((y % yAxissSequenceLength) * xAxissSequenceLength);
 				else 
-					id_neighbour[3] = randomId.get((y % yAxissSequenceLength) * xAxissSequenceLength + (x % xAxissSequenceLength) + 1);
+					id_neighbor[3] = randomId.get((y % yAxissSequenceLength) * xAxissSequenceLength + (x % xAxissSequenceLength) + 1);
 				
-				solution_table[x][y] = new Piece(randomId.get((x % xAxissSequenceLength) + (y % yAxissSequenceLength) * xAxissSequenceLength), x, y, id_neighbour);
+				solution_table[x][y] = new Piece(randomId.get((x % xAxissSequenceLength) + (y % yAxissSequenceLength) * xAxissSequenceLength), x, y, id_neighbor);
 				
 				seqFile.println(randomId.get((y % yAxissSequenceLength) * xAxissSequenceLength + (x % xAxissSequenceLength)) + ";" + x + ";" + y + ";" 
-									+ id_neighbour[0] + ";" + id_neighbour[1] + ";" + id_neighbour[2] + ";" + id_neighbour[3] );
+									+ id_neighbor[0] + ";" + id_neighbor[1] + ";" + id_neighbor[2] + ";" + id_neighbor[3] );
 			
 				piece_list.add(solution_table[x][y]);
 			}

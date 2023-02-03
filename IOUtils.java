@@ -8,8 +8,7 @@ import java.io.PushbackReader;
 
 
 /*
- * Klasa agregujaca procedury do zapisu i odczytu testowanych sekwencji
- * 
+ * A class of procedures designed for writing and reading tested sequences
  */
 
 public class IOUtils extends PushbackReader 

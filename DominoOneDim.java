@@ -1,3 +1,6 @@
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +15,26 @@ public class DominoOneDim {
 		ArrayList<PieceSequence> horizontal_subseq_ready_set = new ArrayList<PieceSequence>();
 		Piece[] subseq;
 		
+		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS");  
+		LocalDateTime now = LocalDateTime.now();  
+		String print_string = "";
+		PrintWriter file = IOUtils.makeFileWriter("src/DominoOfOneDimSubsequences_" + dtf.format(now) + "_experiment_log.txt");
+		
+		System.out.println("Log_created: src/DominoOfOneDimSubsequences__" + dtf.format(now) + "_experiment_log.txt");
+		file.println("Running Domino Of One Dimension Subsequences. Started at " + dtf.format(now));
+		file.println("Start sequence:\n");
+		
+		for(int i = 0; i < yAxissAmount; i++) {
+			for(int j = 0; j < xAxissAmount; j++)
+				print_string = (print_string + solution_table[j][i].getId() + " ");
+			file.println(print_string);
+			print_string = "";
+		}
+		
+		file.println("\n");
+		
+
 		for(int x = 0; x < xAxissAmount; x++)
 			for(int y = 0; y < yAxissAmount; y++) {
 				if(known_id.containsKey(solution_table[x][y].getId()))		// if piece ID already present on hashmap then add position to corresponding arraylist
@@ -25,11 +48,7 @@ public class DominoOneDim {
 		ArrayList<Integer> max_values = new ArrayList<Integer>();
 		
 		known_id.forEach((key, value) -> {
-			System.out.print("\nklucz " + key + " wartosci: ");
 			
-			for(int i = 0; i < value.size(); i++)
-				System.out.print(value.get(i) + " ");
-			System.out.print("\n");
 			int common_seq_length = 0;
 			ArrayList<Integer> value_copy = new ArrayList<Integer>(value);
 
@@ -56,7 +75,7 @@ public class DominoOneDim {
 				max_common_seq_horizontal = max_values.get(i);
 		}
 			
-		System.out.println("Znaleziono rozmiar maksymalnej powtorzonej podsekwencji w osi X: " + max_common_seq_horizontal + " oraz w osi Y: " + max_common_seq_vertical);
+		file.println("\nFound size of the maximum repeated subsequence in x-axis: " + max_common_seq_horizontal + " and in Y-axiss: " + max_common_seq_vertical);
 
 		if (max_common_seq_vertical < yAxissAmount) max_common_seq_vertical++;  //subsequences become deterministic when their length >= K + 2 and lesser than axiss length, K is the greatest repeated subsequence in sequence
 		if (max_common_seq_horizontal < xAxissAmount) max_common_seq_horizontal++;
@@ -84,19 +103,22 @@ public class DominoOneDim {
 					vertical_subseq_set.add(new PieceSequence(subseq, false));
 				}
 		
-		System.out.println("Poczatkowa sekwencja zostala podzielona na : " + horizontal_subseq_set.size() + " elementow w osi X oraz :" + vertical_subseq_set.size()+ " elementow w osi Y");
-		System.out.println("Podsekwencje poziome: ");
+		file.println("The starting sequence was split into: " + horizontal_subseq_set.size() + " elements in the X axis and: " + vertical_subseq_set.size()+ " elements in the Y axis");
+		file.println("\nCreated horizontal subsequences:");
+		print_string = "";
 		
 		for(int i=0; i < horizontal_subseq_set.size(); i++) {
 			for(int j = 0; j < horizontal_subseq_set.get(i).getSequence().length; j++)
-				System.out.print(" " + horizontal_subseq_set.get(i).getPiece(j).getId());
-			System.out.print("\n");
+				print_string = (print_string + horizontal_subseq_set.get(i).getPiece(j).getId() + " ");
+			file.println(print_string);
+			print_string = "";
 		}
-		System.out.println("Podsekwencje pionowe: ");
+		file.println("\nCreated vertical subsequences:");
 		for(int i=0; i < vertical_subseq_set.size(); i++) {
 			for(int j = 0; j < vertical_subseq_set.get(i).getSequence().length; j++)
-				System.out.print(" " + vertical_subseq_set.get(i).getPiece(j).getId());
-			System.out.print("\n");
+				print_string = (print_string + vertical_subseq_set.get(i).getPiece(j).getId() + " ");
+			file.println(print_string);
+			print_string = "";
 		}
 			
 		
@@ -256,18 +278,22 @@ public class DominoOneDim {
 				
 			}
 		
-		System.out.println("Sekwencja zostala ulozone w : " + horizontal_subseq_ready_set.size() + " wierszy oraz :" + vertical_subseq_ready_set.size()+ " kolumn");
-		System.out.println("Wiersze: ");
+		file.println("\n\nThe subsequences were assembled into: " + horizontal_subseq_ready_set.size() + " completed rows and: " + vertical_subseq_ready_set.size()+ " completed columns");
+		file.println("Assembled rows:\n");
 		
 		for(int i = 0; i < horizontal_subseq_ready_set.size(); i++) {
-			System.out.print("\nwiersz nr"+i+":");
 			for(int j = 0; j < horizontal_subseq_ready_set.get(i).getSequence().length; j++)
-				System.out.print(horizontal_subseq_ready_set.get(i).getPiece(j).getId());
+				print_string = (print_string + horizontal_subseq_ready_set.get(i).getPiece(j).getId() + " ");
+			file.println(print_string);
+			print_string = "";
 		}
+		
+		file.println("\nAssembled columns:\n");
 		for(int i = 0; i < vertical_subseq_ready_set.size(); i++) {
-			System.out.print("\nkolumna nr"+i+":");
 			for(int j = 0; j < vertical_subseq_ready_set.get(i).getSequence().length; j++)
-				System.out.print(vertical_subseq_ready_set.get(i).getPiece(j).getId());
+				print_string = (print_string + vertical_subseq_ready_set.get(i).getPiece(j).getId() + " ");
+			file.println(print_string);
+			print_string = "";
 		}
 
 		HashMap<Integer, ArrayList<Integer>> row_ids = new HashMap<Integer, ArrayList<Integer>>();
@@ -301,6 +327,40 @@ public class DominoOneDim {
 			column_ids.put(i, current_list);
 			row_position_ids.put(i, current_position_list);
 		}
+		
+		file.println("\nOrdered set of elements for each row:\n");
+		for(int i = 0; i < row_ids.size(); i++) {
+			for(int j = 0; j < row_ids.get(i).size(); j++)
+				print_string = (print_string + row_ids.get(i).get(j) + " ");
+			file.println(print_string);
+			print_string = "";
+		}
+		
+		file.println("\nOrdered set of elements for each column:\n");
+		for(int i = 0; i < column_ids.size(); i++) {
+			for(int j = 0; j < column_ids.get(i).size(); j++)
+				print_string = (print_string + column_ids.get(i).get(j) + " ");
+			file.println(print_string);
+			print_string = "";
+		}
+		
+		file.println("\nOrdered set of elements for each row position:\n");
+		for(int i = 0; i < row_position_ids.size(); i++) {
+			print_string = ("Position " + i + ":  ");
+			for(int j = 0; j < row_position_ids.get(i).size(); j++)
+				print_string = (print_string + row_position_ids.get(i).get(j) + " ");
+			file.println(print_string);
+		}
+		
+		file.println("\nOrdered set of elements for each column position:\n");
+		for(int i = 0; i < column_position_ids.size(); i++) {
+			print_string = ("Position " + i + ":  ");
+			for(int j = 0; j < column_position_ids.get(i).size(); j++)
+				print_string = (print_string + column_position_ids.get(i).get(j) + " ");
+			file.println(print_string);
+		}
+		
+		print_string = "";
 		
 		boolean checked_bool, unique_bool;
 		//horizontal common pieces with vertical subsequence set position
@@ -443,23 +503,28 @@ public class DominoOneDim {
 				}
 			}
 		
-		System.out.print("\nOtrzymano wynikowa sekwencje: ");
+		print_string = "";
+		file.println("\nNew, ordered sequence:\n");
+		
 		for(int i = 0; i < yAxissAmount; i++) {
-			System.out.print("\n");
 			for(int j = 0; j < xAxissAmount; j++) {
 				if(solved_table[j][i] != null)
-					System.out.print(" " + solved_table[j][i].getId());
-				else 
-					System.out.print(" _ ");
+					print_string = (print_string + solution_table[j][i].getId() + " ");
+				else
+					print_string = (print_string + " _ ");
 			}
+			file.println(print_string);
+			print_string = "";
 		}
-		System.out.print("\n\n");
 		
+		file.println("\n\n");
 		int rezult = SolvedTableCheck(solved_table, solution_table);
 		if(rezult == 0)
-			System.out.println("Sekwencje sa zgodne");
+			file.println("Received sequences are equal");
 		else
-			System.out.println("Popelniono w procesie " + rezult + " bledow");
+			file.println("Received sequences differ in " + rezult + " places");
+
+		file.close();
 	}
 	
 	private static int SimilarSeqLengthHoriz(ArrayList<Integer> positions, int xAxissAmount, int yAxissAmount, Piece[][] solution_table) {
