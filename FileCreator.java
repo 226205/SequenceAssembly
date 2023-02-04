@@ -16,7 +16,8 @@ public class FileCreator {
 		String input, file_name;
 		
 		if (args.length == 6 || args.length == 8) {
-			
+			//System.out.println("qqqq: " + args[1] + " 2: " + args[2] + " 3: " + args[3] + " 4: " + args[4] );
+			//if(args[4] == "true") System.out.println("trueeeeee");
 			if(IOUtils.fileExist("src/"+ args[0] + ".txt") == 1) {
 				System.out.println("Overriding file src/" + args[0] + ".txt");
 			}
@@ -32,11 +33,11 @@ public class FileCreator {
 				System.out.println("args[3] is incorect. Amount od different pieces should be between 1 and "+ ( Integer.parseInt(args[1]) * Integer.parseInt(args[2])) + ".");
 				System.exit(1);
 			}
-			if(!(args[4] == "true" || args[4] == "false" ) || (args[4] == "true" && Integer.parseInt(args[3]) != Integer.parseInt(args[1]) * Integer.parseInt(args[2]))) {
+			if(!(args[4].compareTo("true") == 0|| args[4].compareTo("false") == 0 || (args[4] == "true" && Integer.parseInt(args[3]) != Integer.parseInt(args[1]) * Integer.parseInt(args[2])))) {
 				System.out.println("args[4] is incorect. Flag of piece uniquenes can be set only on 'false' or 'true'. Second option is available only if args[3] = " + ( Integer.parseInt(args[1]) * Integer.parseInt(args[2])));
 				System.exit(1);
 			}
-			if(!(args[5] == "true" || args[5] == "false" )) {
+			if(!(args[5].compareTo("true") == 0 || args[5].compareTo("false") == 0 )) {
 				System.out.println("args[5] is incorect. Flag for specified elements can be set only on 'false' or 'true'.");
 				System.exit(1);
 			}
@@ -45,10 +46,10 @@ public class FileCreator {
 			yAxissAmount = Integer.parseInt(args[2]);
 			all_pieces_amount = Integer.parseInt(args[3]);
 			
-			if(args[4] == "true") all_pieces_unique = true;
+			if(args[4].compareTo("true") == 0) all_pieces_unique = true;
 			else all_pieces_unique = false;
 			
-			if(args[5] == "true") all_pieces_known = true;
+			if(args[5].compareTo("true") == 0) all_pieces_known = true;
 			else all_pieces_known = false;
 			
 			if(dimension_amount > 1) dimension_amount = 2;

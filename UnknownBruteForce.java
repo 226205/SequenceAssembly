@@ -22,15 +22,18 @@ public class UnknownBruteForce {
 		PrintWriter file = IOUtils.makeFileWriter("src/PlainPuzzle_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
 		
 		System.out.println("\nAlgoritm execution started");
-		System.out.println("Log_created: src/PlainPuzzles_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
+		System.out.println("Log created: src/PlainPuzzles_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
 		file.println("Running PlainPuzzles. Started at " + dtf.format(now));
 		file.println("Start sequence:\n");
 		
 		for(int i = 0; i < yAxissAmount; i++) {
-			for(int j = 0; j < xAxissAmount; j++)
-				print_string = (print_string + solution_table[j][i].getId() + " ");
-			file.println(print_string);
 			print_string = "";
+			for(int j = 0; j < xAxissAmount; j++) {
+				print_string = (print_string + solution_table[j][i].getId());
+				if(j + 1 != xAxissAmount)
+					print_string = (print_string + ", ");
+			}
+			file.println(print_string);
 		}
 		
 		file.println("\n");
@@ -104,7 +107,7 @@ public class UnknownBruteForce {
 		}
 		
 		file.println("\n");
-		int rezult = SolvedTableCheck(solved_table, solution_table);
+		int rezult = new ShowResults(solved_table, solution_table, "Plain Puzzle", file_name).getErrorCount();
 		if(rezult == 0)
 			file.println("Received sequences are equal");
 		else
@@ -178,19 +181,6 @@ public class UnknownBruteForce {
 		else
 			System.out.println("File does not suffice requirements. All elements are supposed to be unique!");
 		scanner.close();
-	}
-	
-	private int SolvedTableCheck(Piece[][] solved_table, Piece[][] solution_table) {
-		int error_counter = 0;
-		if (solved_table.length != solution_table.length || solved_table[0].length != solution_table[0].length)
-				throw new IllegalArgumentException("Both sequences differs in dimention length!");
-
-		for(int x = 0; x < solution_table.length; x++)
-			for(int y = 0; y < solution_table[0].length; y++) {
-				if (solved_table[x][y] == null || solution_table[x][y].getId() != solved_table[x][y].getId())
-					error_counter++;
-			}
-		return error_counter;
 	}
 	
 	public Piece[][] getSolvedTable() { return solved_table;}
