@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,9 +17,9 @@ public class SequenceAssembly {
 
 	static int dimension_amount, all_pieces_amount, xAxissAmount, yAxissAmount = 1, xAxissSequenceLength, yAxissSequenceLength = 1;
 	static boolean all_pieces_unique, all_pieces_sequence, all_pieces_known;
-	static Piece[][] solution_table;;
+	static Piece[][] solution_table;
 
-	final static String[] algoritm_names = { "Brute Force - plain puzzles", "Brute Force - known puzzles", "Domino - deterministic subseq 1D", "DNA - DeBrujin"};
+	//final static String[] algoritm_names = { "Brute Force - plain puzzles", "Brute Force - known puzzles", "Domino - deterministic subseq 1D", "DNA - DeBrujin"};
 	
 	private static void s_menu(Scanner scanner) {
 		
@@ -79,12 +78,6 @@ public class SequenceAssembly {
 				System.out.println("File already exists, but it can't be opened. Try using other file.");
 				continue;
 			}
-				
-			
-			if(preconfig && IOUtils.fileExist("src/"+ file_name + ".txt") == 0) {
-				System.out.println("File with a given name does not exist, try again.");
-				continue;
-			}
 
 			if(!preconfig) {
 				if(IOUtils.fileExist("src/"+ file_name + ".txt") == 1)
@@ -112,77 +105,14 @@ public class SequenceAssembly {
 			break;	
 		}
 		
-		int repetition_amt = 1, algoritm_nbr = 0;
-		
-		
-		
-		/*	second menu with parameters to test the sequence: algorithm and number of repetitions - for testing purposes
-		 */	
+		System.out.println("\nCreated Sequence: \n\n");
 		
 		for(int i = 0; i < yAxissAmount; i++) {
 			System.out.println("");
 			for(int j = 0; j < xAxissAmount; j++)
 				System.out.print(" " + solution_table[j][i].getId());
 		}
-		
-		while(true) {
-			System.out.println("\nChoose algorithm and enter quantity of repetitions. Current values:"
-					+ "\n1. Begin algorithm"
-					+ "\n2. Change algorithm (currently chosen algorithm): " + algoritm_names[algoritm_nbr] + ")"
-					+ "\n3. Change quantity of repetitions (current quantity of repetitions: " + repetition_amt +")"
-					+ "\n0. Quit application.");
-			input = scanner.nextLine();
-			if (input.length() != 0 && input.matches("\\d+") && Arrays.asList(1, 2, 3, 0).contains(Integer.parseInt(input)) ) {
-				switch (Integer.parseInt(input)) {
-					case 1:
-						execute_algoritm(repetition_amt, algoritm_nbr, piece_list, file_name);
-						break;
-					case 2:
-						while(true) {
-							System.out.println("Choose algorithm:");
-							for (int i = 0; i < algoritm_names.length; i++)
-								System.out.println((i+1) + ". " + algoritm_names[i]);
-							System.out.println("0. Go back without saving");
-							input = scanner.nextLine();
-							if (input.length() != 0 && input.matches("\\d+") && Integer.parseInt(input) >= 0  && Integer.parseInt(input) <= algoritm_names.length) {
-								if(Integer.parseInt(input) == 0) break;      //{ "Brute Force - common jigsaw puzzle", "Brute Force - known puzzle", "Domino - deterministic subseq 1D", "DNA - DeBrujin"};
-								else if(Integer.parseInt(input) == 1 && all_pieces_unique == true) { algoritm_nbr = Integer.parseInt(input) - 1; break;}
-								else if(Integer.parseInt(input) == 2 && all_pieces_known == true) {algoritm_nbr = Integer.parseInt(input) - 1; break;}
-								else if(Arrays.asList(3).contains(Integer.parseInt(input)) && all_pieces_sequence == true) {algoritm_nbr = Integer.parseInt(input) - 1; break;}
-								else if(Arrays.asList(4).contains(Integer.parseInt(input)) && all_pieces_sequence == true) {algoritm_nbr = Integer.parseInt(input) - 1; break;}
-								else System.out.println("Option for a given number does not exist with current parameters, try again. Previous choice is still the same.");
-							}
-							else
-								System.out.println("Option for a given number does not exist, try again.");
-						}
-						break;
-					case 3:
-						while(true) {
-							System.out.println("Enter the number of repetitions: (max 99, 0 to quit without change of setting)");
-							input = scanner.nextLine();
-							if (input.length() != 0 && input.matches("\\d+") && Integer.parseInt(input) > 0 && Integer.parseInt(input) <= 99) {
-								repetition_amt = Integer.parseInt(input);
-								break;
-							}
-							else if ((input.length() != 0 && input.matches("\\d+")) && Integer.parseInt(input) == 0)
-								break;
-							else if ((input.length() != 0 && input.matches("\\d+")) && Integer.parseInt(input) < 0 || (input.length() != 0 && input.matches("\\d+")) && Integer.parseInt(input) > 99) {
-								System.out.println("Entered value is outside of scope. Supported scope is from 1 to 99. Try again.");
-								continue;
-							}
-							else
-								System.out.println("Option for a given number does not exist, try again.");
-						}
-						break;
-					case 0:
-						System.exit(0);
-				}
-					
-			}
-			else
-				System.out.println("Option for a given number does not exist, try again.");
-		}
-	
+
 	}
 	
 	
@@ -227,51 +157,6 @@ public class SequenceAssembly {
 		return var;
 	}
 	
-	
-	@SuppressWarnings("unchecked")
-	private static void execute_algoritm(int repetition_amt, int algoritm_nbr, ArrayList<Piece> piece_list, String file_name) {
-		long[] execution_times = new long[repetition_amt];
-		long timestamps_diff;
-		Timestamp start_dt = new Timestamp(System.currentTimeMillis()), iteration_dt = new Timestamp(System.currentTimeMillis()), end_dt = new Timestamp(System.currentTimeMillis());
-		ArrayList<Piece> local_piece_list;
-		
-		System.out.println("Starting");
-		
-		
-		for (int i = 0; i < repetition_amt; i++) {
-			
-			switch (algoritm_nbr) {
-				case 0: // "Brute Force - common jigsaw puzzle"
-					local_piece_list = (ArrayList<Piece>) piece_list.clone();
-					Collections.shuffle(local_piece_list);
-					new UnknownBruteForce(local_piece_list, xAxissAmount, yAxissAmount, solution_table, dimension_amount);
-					break;
-				case 1: // "Brute Force - known puzzle"
-					local_piece_list = (ArrayList<Piece>) piece_list.clone();
-					Collections.shuffle(local_piece_list);
-					new KnownBruteForce(local_piece_list, xAxissAmount, yAxissAmount, solution_table, dimension_amount);
-					break;
-				case 2: // "Domino - deterministic subseq 1D"
-					new DominoOneDim(xAxissAmount, yAxissAmount, solution_table, dimension_amount);
-					break;
-				case 3: // "DNA - DeBrujin"
-					new DNAdeBrujin(xAxissAmount, yAxissAmount, solution_table, dimension_amount);
-					break;
-			}
-			end_dt = new Timestamp(System.currentTimeMillis());
-			execution_times[i] = end_dt.getTime() - iteration_dt.getTime();
-			iteration_dt = end_dt;
-		}
-		
-
-		timestamps_diff = end_dt.getTime() - start_dt.getTime();
-		
-		System.out.println("Work finished. Algorithm used: " + algoritm_names[algoritm_nbr] + " based on file: " + file_name + ".txt"
-				+ "\nBegin timestamp: " + start_dt
-				+ "\nFinish timestamp: " + end_dt
-				+ "\nExecution time: " + timestamps_diff + "ms");
-
-	}
 
 	
 	private static ArrayList<Piece> s_ReadFromFile(String file_name) {

@@ -1,7 +1,10 @@
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
 
 public class KnownBruteForce {
 	
@@ -62,6 +65,62 @@ public class KnownBruteForce {
 			file.println("Received sequences differ in " + rezult + " places");
 
 		file.close();
+	}
+	
+	public static void main(String[] args) {
+		
+		String file_name;
+		Scanner scanner = new Scanner(System.in);
+		
+		while(true) {
+			System.out.println("Type name of seqence file (without.txt extension): ");
+			file_name = scanner.nextLine();
+			
+			if(IOUtils.fileExist("src/"+ file_name + ".txt") == -1){
+				System.out.println("File exists, but it can't be opened. Try using other file.");
+				continue;
+			}
+				
+			
+			if(IOUtils.fileExist("src/"+ file_name + ".txt") == 0) {
+				System.out.println("File with a given name does not exist, try again.");
+				continue;
+			}
+			break;
+		}
+		
+		FileReader f_reader = new FileReader("src/"+ file_name + ".txt");
+		
+		int dimension_amount, xAxissAmount, yAxissAmount;
+		ArrayList<Piece> piece_list;
+		Piece[][] solution_table;
+		Timestamp start_dt = new Timestamp(System.currentTimeMillis()), end_dt = new Timestamp(System.currentTimeMillis());
+		
+		dimension_amount = f_reader.getDimensionAmount();
+		xAxissAmount = f_reader.getXAxissAmount();
+		yAxissAmount = f_reader.getYAxissAmount();
+		solution_table = f_reader.getSolutionTable();
+		piece_list = f_reader.getPieceList();
+		
+		ArrayList<Piece> local_piece_list = new ArrayList<Piece>();
+		local_piece_list.addAll(piece_list);
+		Collections.shuffle(local_piece_list);
+		
+		if(f_reader.isAllPiecesUnique()) {
+			
+			new KnownBruteForce(local_piece_list, xAxissAmount, yAxissAmount, solution_table, dimension_amount);
+			
+			end_dt = new Timestamp(System.currentTimeMillis());
+			long timestamps_diff = end_dt.getTime() - start_dt.getTime();
+			
+			System.out.println("\nBegin timestamp: " + start_dt
+					+ "\nFinish timestamp: " + end_dt
+					+ "\nExecution time: " + timestamps_diff + "ms");
+		
+		}
+		else
+			System.out.println("File does not suffice requirements. All elements are supposed to be unique!");
+		scanner.close();
 	}
 
 	private int SolvedTableCheck(Piece[][] solved_table, Piece[][] solution_table) {

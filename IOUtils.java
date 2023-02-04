@@ -35,7 +35,7 @@ public class IOUtils extends PushbackReader
 		return doesExist;
 	}
 	
-	public static PrintWriter makeFileWriter(String file_name) //(String file_name, int dimension_amount, int all_pieces_amount, int xAxissAmount, int yAxissAmount, boolean all_pieces_unique, boolean all_pieces_used)
+	public static PrintWriter makeFileWriter(String file_name)
 	{
 		PrintWriter seqFile = null;
 	    try
@@ -65,7 +65,7 @@ public class IOUtils extends PushbackReader
 	private static void handleException(Exception e)
 	{
 		System.err.println("Exception:" + e);
-		System.err.println("IOUtils zatrzymal program, wystapil niespodziewany blad");
+		System.err.println("IOUtils stopped the program, unexpected error occured");
 		System.exit(0);
 	}
 

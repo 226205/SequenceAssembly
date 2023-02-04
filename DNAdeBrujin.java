@@ -1,10 +1,12 @@
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Scanner;
 
 public class DNAdeBrujin {
 	public DNAdeBrujin(int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount) {
@@ -20,10 +22,10 @@ public class DNAdeBrujin {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS");  
 		LocalDateTime now = LocalDateTime.now();  
 		String print_string = "";
-		PrintWriter file = IOUtils.makeFileWriter("src/DominoOfOneDimSubsequences_" + dtf.format(now) + "_experiment_log.txt");
+		PrintWriter file = IOUtils.makeFileWriter("src/DNAdeBrujin_" + dtf.format(now) + "_experiment_log.txt");
 		
-		System.out.println("Log_created: src/DominoOfOneDimSubsequences__" + dtf.format(now) + "_experiment_log.txt");
-		file.println("Running Domino Of One Dimension Subsequences. Started at " + dtf.format(now));
+		System.out.println("Log_created: src/DNAdeBrujin_" + dtf.format(now) + "_experiment_log.txt");
+		file.println("Running De Brujin Algoritm. Started at " + dtf.format(now));
 		file.println("Start sequence:\n");
 		
 		for(int i = 0; i < yAxissAmount; i++) {
@@ -563,6 +565,56 @@ public class DNAdeBrujin {
 		
 	}
 	
+	public static void main(String[] args) {
+		
+		String file_name;
+		Scanner scanner = new Scanner(System.in);
+		
+		while(true) {
+			System.out.println("Type name of seqence file (without.txt extension): ");
+			file_name = scanner.nextLine();
+			
+			if(IOUtils.fileExist("src/"+ file_name + ".txt") == -1){
+				System.out.println("File exists, but it can't be opened. Try using other file.");
+				continue;
+			}
+				
+			
+			if(IOUtils.fileExist("src/"+ file_name + ".txt") == 0) {
+				System.out.println("File with a given name does not exist, try again.");
+				continue;
+			}
+			break;
+		}
+		
+		FileReader f_reader = new FileReader("src/"+ file_name + ".txt");
+		
+		int dimension_amount, xAxissAmount, yAxissAmount;
+		Piece[][] solution_table;
+		Timestamp start_dt = new Timestamp(System.currentTimeMillis()), end_dt = new Timestamp(System.currentTimeMillis());
+		
+		dimension_amount = f_reader.getDimensionAmount();
+		xAxissAmount = f_reader.getXAxissAmount();
+		yAxissAmount = f_reader.getYAxissAmount();
+		solution_table = f_reader.getSolutionTable();
+		
+		if(f_reader.isAllPiecesSequence()) {
+
+			new DNAdeBrujin(xAxissAmount, yAxissAmount, solution_table, dimension_amount);
+			
+			end_dt = new Timestamp(System.currentTimeMillis());
+			long timestamps_diff = end_dt.getTime() - start_dt.getTime();
+			
+			System.out.println("\nBegin timestamp: " + start_dt
+					+ "\nFinish timestamp: " + end_dt
+					+ "\nExecution time: " + timestamps_diff + "ms");
+		
+		}
+		else
+			System.out.println("File does not suffice requirements. The sequence is supposed to not be periodic in order to find shortest repetition!");
+		scanner.close();
+	}
+	
 	private static int SimilarSeqLengthHoriz(ArrayList<Integer> positions, int xAxissAmount, int yAxissAmount, Piece[][] solution_table) {
 		//transmission of elements set with same ID and with 
         //the same ID of predecessor element in subsequence
@@ -654,10 +706,10 @@ public class DNAdeBrujin {
 	}
 
 	
-	private static int SolvedTableCheck(Piece[][] solved_table, Piece[][] solution_table) {
+	private int SolvedTableCheck(Piece[][] solved_table, Piece[][] solution_table) {
 		int error_counter = 0;
 		if (solved_table.length != solution_table.length || solved_table[0].length != solution_table[0].length)
-				throw new IllegalArgumentException("Sekwencja rozwiazania nie jest tozsama z zadana sekwencja pod katem wymiarow!");
+				throw new IllegalArgumentException("Both sequences differs in dimention length!");
 
 		for(int x = 0; x < solution_table.length; x++)
 			for(int y = 0; y < solution_table[0].length; y++) {
