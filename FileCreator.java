@@ -16,8 +16,6 @@ public class FileCreator {
 		String input, file_name;
 		
 		if (args.length == 6 || args.length == 8) {
-			//System.out.println("qqqq: " + args[1] + " 2: " + args[2] + " 3: " + args[3] + " 4: " + args[4] );
-			//if(args[4] == "true") System.out.println("trueeeeee");
 			if(IOUtils.fileExist("src/"+ args[0] + ".txt") == 1) {
 				System.out.println("Overriding file src/" + args[0] + ".txt");
 			}
@@ -52,11 +50,11 @@ public class FileCreator {
 			if(args[5].compareTo("true") == 0) all_pieces_known = true;
 			else all_pieces_known = false;
 			
-			if(dimension_amount > 1) dimension_amount = 2;
+			if(yAxissAmount > 1) dimension_amount = 2;
 			else dimension_amount = 1;
 			
 			if(args.length == 6) {
-				all_pieces_sequence = true;
+				all_pieces_sequence = false;
 				xAxissSequenceLength = xAxissAmount;
 				yAxissSequenceLength = yAxissAmount;
 			}
