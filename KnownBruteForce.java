@@ -15,6 +15,7 @@ public class KnownBruteForce {
 		String print_string = "";
 		PrintWriter file = IOUtils.makeFileWriter("src/KnownPuzzles_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
 		
+		System.out.println("\nAlgoritm execution started");
 		System.out.println("Log_created: src/KnownPuzzles_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
 		file.println("Running KnownPuzzle. Started at " + dtf.format(now));
 		file.println("Start sequence:\n");
@@ -78,18 +79,28 @@ public class KnownBruteForce {
 		Scanner scanner = new Scanner(System.in);
 		
 		while(true) {
-			System.out.println("Type name of seqence file (without.txt extension): ");
-			file_name = scanner.nextLine();
+			if (args.length > 0)
+				file_name = args[0];
+			else {
+				System.out.println("Type name of seqence file (without.txt extension): ");
+				file_name = scanner.nextLine();
+			}
 			
 			if(IOUtils.fileExist("src/"+ file_name + ".txt") == -1){
-				System.out.println("File exists, but it can't be opened. Try using other file.");
-				continue;
+				System.out.println("File src/"+ file_name + ".txt exists, but it can't be opened. Try using other file.");
+				if (args.length == 0)
+					continue;
+				else
+					System.exit(0);
 			}
 				
 			
 			if(IOUtils.fileExist("src/"+ file_name + ".txt") == 0) {
-				System.out.println("File with a given name does not exist, try again.");
-				continue;
+				System.out.println("File with a given name: 'src/" + file_name + ".txt' does not exist, try again.");
+				if (args.length == 0)
+					continue;
+				else
+					System.exit(0);
 			}
 			break;
 		}
