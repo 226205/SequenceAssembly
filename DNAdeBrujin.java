@@ -9,7 +9,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class DNAdeBrujin {
-	public DNAdeBrujin(int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount) {
+	public DNAdeBrujin(int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount, String file_name) {
 		Piece[][] solved_table = new Piece[xAxissAmount][yAxissAmount];
 		HashMap<Integer, ArrayList<Integer>> known_id = new HashMap<Integer, ArrayList<Integer>>();
 		ArrayList<PieceSequence> vertical_subseq_set = new ArrayList<PieceSequence>();
@@ -22,17 +22,20 @@ public class DNAdeBrujin {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS");  
 		LocalDateTime now = LocalDateTime.now();  
 		String print_string = "";
-		PrintWriter file = IOUtils.makeFileWriter("src/DNAdeBrujin_" + dtf.format(now) + "_experiment_log.txt");
+		PrintWriter file = IOUtils.makeFileWriter("src/DNAdeBrujin_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
 		
-		System.out.println("Log_created: src/DNAdeBrujin_" + dtf.format(now) + "_experiment_log.txt");
+		System.out.println("Log_created: src/DNAdeBrujin_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
 		file.println("Running De Brujin Algoritm. Started at " + dtf.format(now));
 		file.println("Start sequence:\n");
 		
 		for(int i = 0; i < yAxissAmount; i++) {
-			for(int j = 0; j < xAxissAmount; j++)
-				print_string = (print_string + solution_table[j][i].getId() + " ");
+			print_string = "(";
+			for(int j = 0; j < xAxissAmount; j++) {
+				print_string = (print_string + solution_table[j][i].getId());				
+				if(j + 1 != xAxissAmount)
+					print_string = (print_string + ", ");
+			}
 			file.println(print_string);
-			print_string = "";
 		}
 		
 		file.println("\n");
@@ -78,8 +81,11 @@ public class DNAdeBrujin {
 				max_common_seq_horizontal = max_values.get(i);
 		}
 			
-		file.println("\nFound size of the maximum repeated subsequence in x-axis: " + max_common_seq_horizontal + " and in Y-axiss: " + max_common_seq_vertical);
-
+		print_string = "\nFound size of the maximum repeated subsequence in x-axis: " + max_common_seq_horizontal;
+		if (dimension_amount == 2) 
+			print_string = print_string + " and in Y-axiss: " + max_common_seq_vertical;
+		file.println(print_string);
+		
 		if (max_common_seq_vertical + 2 < yAxissAmount) max_common_seq_vertical += 2; else max_common_seq_vertical = yAxissAmount;  //subsequences become deterministic when their length >= K + 2 and lesser than axiss length, K is the greatest repeated subsequence in sequence
 		if (max_common_seq_horizontal + 2 < xAxissAmount) max_common_seq_horizontal+= 2; else max_common_seq_horizontal = xAxissAmount;
 
@@ -109,8 +115,10 @@ public class DNAdeBrujin {
 						vertical_subseq_set.add(new PieceSequence(subseq, false, max_common_seq_vertical - 1));
 				}
 		
-		file.println("The starting sequence was split into: " + horizontal_subseq_set.size() + " elements in the X axis and: " + vertical_subseq_set.size()+ " elements in the Y axis");
-		file.println("\nCreated horizontal subsequences:");
+		print_string = "The starting sequence was split into: " + horizontal_subseq_set.size() + " elements in the X axis";
+		if(dimension_amount == 2)
+			print_string = print_string + " and: " + vertical_subseq_set.size()+ " elements in the Y axis";
+		file.println(print_string + "\nCreated horizontal subsequences:");
 		
 		
 		for(int i=0; i < horizontal_subseq_set.size(); i++) {
@@ -125,17 +133,19 @@ public class DNAdeBrujin {
 			file.println(print_string);
 		}
 		
-		file.println("\nCreated vertical subsequences:");
-		for(int i=0; i < vertical_subseq_set.size(); i++) {
-			print_string = "(";
-			for(int j = 0; j < vertical_subseq_set.get(i).getSequence().length; j++) {
-				print_string = (print_string + vertical_subseq_set.get(i).getPiece(j).getId());
-				if(j + 1 != vertical_subseq_set.get(i).getSequence().length)
-					print_string = (print_string + ", ");
-				else
-					print_string = (print_string + ")");
+		if(dimension_amount == 2) {
+			file.println("\nCreated vertical subsequences:");
+			for(int i=0; i < vertical_subseq_set.size(); i++) {
+				print_string = "(";
+				for(int j = 0; j < vertical_subseq_set.get(i).getSequence().length; j++) {
+					print_string = (print_string + vertical_subseq_set.get(i).getPiece(j).getId());
+					if(j + 1 != vertical_subseq_set.get(i).getSequence().length)
+						print_string = (print_string + ", ");
+					else
+						print_string = (print_string + ")");
+				}
+				file.println(print_string);
 			}
-			file.println(print_string);
 		}
 			
 		
@@ -313,24 +323,37 @@ public class DNAdeBrujin {
 		}
 		
 		
-		file.println("\n\nThe subsequences were assembled into: " + horizontal_subseq_ready_set.size() + " completed rows and: " + vertical_subseq_ready_set.size()+ " completed columns");
-		file.println("Assembled rows:\n");
-		
-		print_string = "";
+		print_string = "\n\nThe subsequences were assembled into: " + horizontal_subseq_ready_set.size() + " completed rows";
+		if(dimension_amount == 2) 
+			print_string = print_string + " and: " + vertical_subseq_ready_set.size() + " completed columns";
+		file.println(print_string + "\nAssembled rows:\n");
 		
 		for(int i = 0; i < horizontal_subseq_ready_set.size(); i++) {
-			for(int j = 0; j < horizontal_subseq_ready_set.get(i).getSequence().length; j++)
+			print_string = "(";
+			for(int j = 0; j < horizontal_subseq_ready_set.get(i).getSequence().length; j++) {
 				print_string = (print_string + horizontal_subseq_ready_set.get(i).getPiece(j).getId() + " ");
+				if(j + 1 != horizontal_subseq_ready_set.get(i).getSequence().length)
+					print_string = (print_string + ", ");
+				else
+					print_string = (print_string + ")");
+			}
 			file.println(print_string);
-			print_string = "";
 		}
 		
-		file.println("\nAssembled columns:\n");
-		for(int i = 0; i < vertical_subseq_ready_set.size(); i++) {
-			for(int j = 0; j < vertical_subseq_ready_set.get(i).getSequence().length; j++)
-				print_string = (print_string + vertical_subseq_ready_set.get(i).getPiece(j).getId() + " ");
-			file.println(print_string);
-			print_string = "";
+		if(dimension_amount == 2) {
+			
+			file.println("\nAssembled columns:\n");
+			for(int i = 0; i < vertical_subseq_ready_set.size(); i++) {
+				print_string = "(";
+				for(int j = 0; j < vertical_subseq_ready_set.get(i).getSequence().length; j++) {
+					print_string = (print_string + vertical_subseq_ready_set.get(i).getPiece(j).getId() + " ");
+					if(j + 1 != vertical_subseq_ready_set.get(i).getSequence().length)
+						print_string = (print_string + ", ");
+					else
+						print_string = (print_string + ")");
+				}
+				file.println(print_string);
+			}
 		}
 		
 		
@@ -367,37 +390,62 @@ public class DNAdeBrujin {
 		}
 		
 		
-		file.println("\nOrdered set of elements for each row:\n");
-		for(int i = 0; i < row_ids.size(); i++) {
-			for(int j = 0; j < row_ids.get(i).size(); j++)
-				print_string = (print_string + row_ids.get(i).get(j) + " ");
-			file.println(print_string);
-			print_string = "";
+		if(dimension_amount == 2) {
+			
+			file.println("\nOrdered set of elements for each row:\n");
+			for(int i = 0; i < row_ids.size(); i++) {
+				print_string = "(";
+				for(int j = 0; j < row_ids.get(i).size(); j++) {
+					print_string = (print_string + row_ids.get(i).get(j) + " ");
+					if(j + 1 != row_ids.get(i).size())
+						print_string = (print_string + ", ");
+					else
+						print_string = (print_string + ")");
+				}
+				file.println(print_string);
+			}
+			
+			file.println("\nOrdered set of elements for each column:\n");
+			for(int i = 0; i < column_ids.size(); i++) {
+				print_string = "(";
+				for(int j = 0; j < column_ids.get(i).size(); j++) {
+					print_string = (print_string + column_ids.get(i).get(j));
+					if(j + 1 != column_ids.get(i).size())
+						print_string = (print_string + ", ");
+					else
+						print_string = (print_string + ")");
+				}
+				file.println(print_string);
+			}
+			
+			file.println("\nOrdered set of elements for each row position:\n");
+			for(int i = 0; i < row_position_ids.size(); i++) {
+				print_string = ("Position " + i + ":  (");
+				for(int j = 0; j < row_position_ids.get(i).size(); j++) {
+					print_string = (print_string + row_position_ids.get(i).get(j) + " ");
+					if(j + 1 != row_position_ids.get(i).size())
+						print_string = (print_string + ", ");
+					else
+						print_string = (print_string + ")");
+				}
+				file.println(print_string);
+			}
+			
+			file.println("\nOrdered set of elements for each column position:\n");
+			for(int i = 0; i < column_position_ids.size(); i++) {
+				print_string = ("Position " + i + ":  (");
+				for(int j = 0; j < column_position_ids.get(i).size(); j++) {
+					print_string = (print_string + column_position_ids.get(i).get(j) + " ");
+					if(j + 1 != column_position_ids.get(i).size())
+						print_string = (print_string + ", ");
+					else
+						print_string = (print_string + ")");
+				}
+				file.println(print_string);
+			}
 		}
 		
-		file.println("\nOrdered set of elements for each column:\n");
-		for(int i = 0; i < column_ids.size(); i++) {
-			for(int j = 0; j < column_ids.get(i).size(); j++)
-				print_string = (print_string + column_ids.get(i).get(j) + " ");
-			file.println(print_string);
-			print_string = "";
-		}
-		
-		file.println("\nOrdered set of elements for each row position:\n");
-		for(int i = 0; i < row_position_ids.size(); i++) {
-			print_string = ("Position " + i + ":  ");
-			for(int j = 0; j < row_position_ids.get(i).size(); j++)
-				print_string = (print_string + row_position_ids.get(i).get(j) + " ");
-			file.println(print_string);
-		}
-		
-		file.println("\nOrdered set of elements for each column position:\n");
-		for(int i = 0; i < column_position_ids.size(); i++) {
-			print_string = ("Position " + i + ":  ");
-			for(int j = 0; j < column_position_ids.get(i).size(); j++)
-				print_string = (print_string + column_position_ids.get(i).get(j) + " ");
-			file.println(print_string);
-		}
+		print_string = "";
 		
 		
 		boolean checked_bool, unique_bool;
@@ -450,14 +498,19 @@ public class DNAdeBrujin {
 		file.println("\nAll deterministic rows filled:\n");
 		
 		for(int i = 0; i < yAxissAmount; i++) {
+			print_string = "(";
 			for(int j = 0; j < xAxissAmount; j++) {
 				if(solved_table[j][i] != null)
-					print_string = (print_string + solution_table[j][i].getId() + " ");
+					print_string = (print_string + solution_table[j][i].getId());
 				else
-					print_string = (print_string + "_ ");
+					print_string = (print_string + "_");
+				
+				if(j + 1 != xAxissAmount)
+					print_string = (print_string + ", ");
+				else
+					print_string = (print_string + ")");
 			}
 			file.println(print_string);
-			print_string = "";
 		}
 
 		//vertical common pieces with horizontal subsequence set position
@@ -505,20 +558,26 @@ public class DNAdeBrujin {
 			}
 		}
 		
-		print_string = "";
-		file.println("\nAll deterministic collumn filled:\n");
-		
-		for(int i = 0; i < yAxissAmount; i++) {
-			for(int j = 0; j < xAxissAmount; j++) {
-				if(solved_table[j][i] != null)
-					print_string = (print_string + solution_table[j][i].getId() + " ");
-				else
-					print_string = (print_string + "_ ");
-			}
-			file.println(print_string);
+		if(dimension_amount == 2) {
 			print_string = "";
+			file.println("\nAll deterministic collumn filled:\n");
+			
+			for(int i = 0; i < yAxissAmount; i++) {
+				print_string = "(";
+				for(int j = 0; j < xAxissAmount; j++) {
+					if(solved_table[j][i] != null)
+						print_string = (print_string + solution_table[j][i].getId());
+					else
+						print_string = (print_string + "_");
+					
+					if(j + 1 != xAxissAmount)
+						print_string = (print_string + ", ");
+					else
+						print_string = (print_string + ")");
+				}
+				file.println(print_string);
+			}
 		}
-		
 		
 		//horizontal supplement
 		for(int i = 0; i < horizontal_subseq_ready_set.size(); i++) {
@@ -573,22 +632,29 @@ public class DNAdeBrujin {
 		file.println("\nNew, ordered sequence:\n");
 		
 		for(int i = 0; i < yAxissAmount; i++) {
+			print_string = "(";
 			for(int j = 0; j < xAxissAmount; j++) {
 				if(solved_table[j][i] != null)
-					print_string = (print_string + solution_table[j][i].getId() + " ");
+					print_string = (print_string + solved_table[j][i].getId());
 				else
-					print_string = (print_string + " _ ");
+					print_string = (print_string + "_");
+				
+				if(j + 1 != xAxissAmount)
+					print_string = (print_string + ", ");
+				else
+					print_string = (print_string + ")");
 			}
 			file.println(print_string);
-			print_string = "";
 		}
 		
-		file.println("\n\n");
+		file.println("\n");
 		int rezult = SolvedTableCheck(solved_table, solution_table);
 		if(rezult == 0)
 			file.println("Received sequences are equal");
 		else
 			file.println("Received sequences differ in " + rezult + " places");
+		
+		file.println("Run finished at " + dtf.format(now));
 
 		file.close();
 		
@@ -629,7 +695,7 @@ public class DNAdeBrujin {
 		
 		if(f_reader.isAllPiecesSequence()) {
 
-			new DNAdeBrujin(xAxissAmount, yAxissAmount, solution_table, dimension_amount);
+			new DNAdeBrujin(xAxissAmount, yAxissAmount, solution_table, dimension_amount, file_name);
 			
 			end_dt = new Timestamp(System.currentTimeMillis());
 			long timestamps_diff = end_dt.getTime() - start_dt.getTime();

@@ -8,15 +8,15 @@ import java.util.Scanner;
 
 public class KnownBruteForce {
 	
-	public KnownBruteForce(ArrayList<Piece> local_piece_list, int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount) {
+	public KnownBruteForce(ArrayList<Piece> local_piece_list, int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount, String file_name) {
 		Piece[][] solved_table = new Piece[xAxissAmount][yAxissAmount];
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS");  
 		LocalDateTime now = LocalDateTime.now();  
 		String print_string = "";
-		PrintWriter file = IOUtils.makeFileWriter("src/BruteForce_KnownPuzzles_" + dtf.format(now) + "_experiment_log.txt");
+		PrintWriter file = IOUtils.makeFileWriter("src/KnownPuzzles_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
 		
-		System.out.println("Log_created: src/BruteForce_KnownPuzzles_" + dtf.format(now) + "_experiment_log.txt");
-		file.println("Running BruteForce_KnownPuzzle. Started at " + dtf.format(now));
+		System.out.println("Log_created: src/KnownPuzzles_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
+		file.println("Running KnownPuzzle. Started at " + dtf.format(now));
 		file.println("Start sequence:\n");
 		
 		for(int i = 0; i < yAxissAmount; i++) {
@@ -49,21 +49,26 @@ public class KnownBruteForce {
 		for(int i = 0; i < yAxissAmount; i++) {
 			for(int j = 0; j < xAxissAmount; j++) {
 				if(solved_table[j][i] != null)
-					print_string = (print_string + solution_table[j][i].getId() + " ");
+					print_string = (print_string + solution_table[j][i].getId());
 				else
-					print_string = (print_string + " _ ");
+					print_string = (print_string + "_");
+				
+				if(j+1 != xAxissAmount)
+					print_string = (print_string + ", ");
 			}
 			file.println(print_string);
 			print_string = "";
 		}
 		
-		file.println("\n\n");
+		file.println("\n");
 		int rezult = SolvedTableCheck(solved_table, solution_table);
 		if(rezult == 0)
 			file.println("Received sequences are equal");
 		else
 			file.println("Received sequences differ in " + rezult + " places");
 
+		file.println("Run finished at " + dtf.format(now));
+		
 		file.close();
 	}
 	
@@ -108,7 +113,7 @@ public class KnownBruteForce {
 		
 		if(f_reader.isAllPiecesUnique()) {
 			
-			new KnownBruteForce(local_piece_list, xAxissAmount, yAxissAmount, solution_table, dimension_amount);
+			new KnownBruteForce(local_piece_list, xAxissAmount, yAxissAmount, solution_table, dimension_amount, file_name);
 			
 			end_dt = new Timestamp(System.currentTimeMillis());
 			long timestamps_diff = end_dt.getTime() - start_dt.getTime();
