@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class DominoOneDim {
-	public DominoOneDim(int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount) {
+	public DominoOneDim(int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount, String file_name) {
 		Piece[][] solved_table = new Piece[xAxissAmount][yAxissAmount];
 		HashMap<Integer, ArrayList<Integer>> known_id = new HashMap<Integer, ArrayList<Integer>>();
 		ArrayList<PieceSequence> vertical_subseq_set = new ArrayList<PieceSequence>();
@@ -21,9 +21,9 @@ public class DominoOneDim {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS");  
 		LocalDateTime now = LocalDateTime.now();  
 		String print_string = "";
-		PrintWriter file = IOUtils.makeFileWriter("src/DominoOfOneDimSubsequences_" + dtf.format(now) + "_experiment_log.txt");
+		PrintWriter file = IOUtils.makeFileWriter("src/Domino_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
 		
-		System.out.println("Log_created: src/DominoOfOneDimSubsequences__" + dtf.format(now) + "_experiment_log.txt");
+		System.out.println("Log_created: src/Domino_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt");
 		file.println("Running Domino Of One Dimension Subsequences. Started at " + dtf.format(now));
 		file.println("Start sequence:\n");
 		
@@ -406,12 +406,24 @@ public class DominoOneDim {
 								}	
 							}	
 						}	
-
 					}
 				}
 			}
-
 			
+			print_string = "";
+			file.println("\nAll deterministic rows filled:\n");
+			
+			for(int i = 0; i < yAxissAmount; i++) {
+				for(int j = 0; j < xAxissAmount; j++) {
+					if(solved_table[j][i] != null)
+						print_string = (print_string + solution_table[j][i].getId() + " ");
+					else
+						print_string = (print_string + "_ ");
+				}
+				file.println(print_string);
+				print_string = "";
+			}
+
 			//vertical common pieces with horizontal subsequence set position
 			for(int i = 0; i < xAxissAmount; i++) {
 				if(column_ids.keySet().contains(i)) {
@@ -443,8 +455,9 @@ public class DominoOneDim {
 									}
 								}
 								if(checked_bool) {
-									for(int k = 0; k < vertical_subseq_ready_set.get(j).getSequence().length && solved_table[j][k] == null; k++) {
-										solved_table[j][k] = vertical_subseq_ready_set.get(i).getPiece(k);
+									for(int k = 0; k < vertical_subseq_ready_set.get(j).getSequence().length; k++) {
+										if(solved_table[j][k] == null)
+											solved_table[j][k] = vertical_subseq_ready_set.get(i).getPiece(k);
 									}
 									row_position_ids.remove(j);
 									column_ids.remove(i);
@@ -456,53 +469,68 @@ public class DominoOneDim {
 				}
 			}
 			
+			print_string = "";
+			file.println("\nAll deterministic collumn filled:\n");
+			
+			for(int i = 0; i < yAxissAmount; i++) {
+				for(int j = 0; j < xAxissAmount; j++) {
+					if(solved_table[j][i] != null)
+						print_string = (print_string + solution_table[j][i].getId() + " ");
+					else
+						print_string = (print_string + "_ ");
+				}
+				file.println(print_string);
+				print_string = "";
+			}
+			
 			
 			//horizontal supplement
-			for(int i = 0; i < horizontal_subseq_ready_set.size() && row_ids.containsKey(i); i++) {
-				
-				for (int j = 0; j < yAxissAmount; j++) {
-					checked_bool = true;
-					for (int k = 0; k < xAxissAmount; k++) {
-						if(solved_table[k][j] != null && solved_table[k][j].getId() != horizontal_subseq_ready_set.get(i).getPiece(k).getId()) {
-							checked_bool = false;
+			for(int i = 0; i < horizontal_subseq_ready_set.size(); i++) {
+				if(row_ids.containsKey(i));
+					for (int j = 0; j < yAxissAmount; j++) {
+						checked_bool = true;
+						for (int k = 0; k < xAxissAmount; k++) {
+							if(solved_table[k][j] != null && solved_table[k][j].getId() != horizontal_subseq_ready_set.get(i).getPiece(k).getId()) {
+								checked_bool = false;
+								break;
+							}		
+						}
+						if (checked_bool) {
+							for (int k = 0; k < xAxissAmount; k++)
+								solved_table[k][j] = horizontal_subseq_ready_set.get(i).getPiece(k);
+							
+							horizontal_subseq_ready_set.remove(i);
+							row_ids.remove(i);
+							i--;
 							break;
-						}		
-					}
-					if (checked_bool) {
-						for (int k = 0; k < xAxissAmount; k++)
-							solved_table[k][j] = horizontal_subseq_ready_set.get(i).getPiece(k);
+						}
 						
-						horizontal_subseq_ready_set.remove(i);
-						row_ids.remove(i);
-						i--;
-						break;
 					}
-					
-				}
 			}
 		
 			//vertical supplement
 			
-			for(int i = 0; i < vertical_subseq_ready_set.size() && column_ids.containsKey(i); i++) {
-				for (int j = 0; j < xAxissAmount; j++) {
-					checked_bool = true;
-					for (int k = 0; k < yAxissAmount; k++) {
-						if(solved_table[j][k] != null && solved_table[j][k].getId() != vertical_subseq_ready_set.get(i).getPiece(k).getId()) {
-							checked_bool = false;
+			for(int i = 0; i < vertical_subseq_ready_set.size(); i++) {
+				if(column_ids.containsKey(i))
+					for (int j = 0; j < xAxissAmount; j++) {
+						checked_bool = true;
+						for (int k = 0; k < yAxissAmount; k++) {
+							if(solved_table[j][k] != null && solved_table[j][k].getId() != vertical_subseq_ready_set.get(i).getPiece(k).getId()) {
+								checked_bool = false;
+								break;
+							}		
+						}
+						if (checked_bool) {
+							for (int k = 0; k < yAxissAmount; k++)
+								solved_table[j][k] = vertical_subseq_ready_set.get(i).getPiece(k);
+							
+							vertical_subseq_ready_set.remove(i);
+							column_ids.remove(i);
+							i--;
 							break;
-						}		
-					}
-					if (checked_bool) {
-						for (int k = 0; k < yAxissAmount; k++)
-							solved_table[j][k] = vertical_subseq_ready_set.get(i).getPiece(k);
+						}
 						
-						vertical_subseq_ready_set.remove(i);
-						column_ids.remove(i);
-						i--;
-						break;
 					}
-					
-				}
 			}
 		
 		print_string = "";
@@ -513,7 +541,7 @@ public class DominoOneDim {
 				if(solved_table[j][i] != null)
 					print_string = (print_string + solution_table[j][i].getId() + " ");
 				else
-					print_string = (print_string + " _ ");
+					print_string = (print_string + "_ ");
 			}
 			file.println(print_string);
 			print_string = "";
@@ -564,7 +592,7 @@ public class DominoOneDim {
 		
 		if(f_reader.isAllPiecesSequence()) {
 
-			new DominoOneDim(xAxissAmount, yAxissAmount, solution_table, dimension_amount);
+			new DominoOneDim(xAxissAmount, yAxissAmount, solution_table, dimension_amount, file_name);
 			
 			end_dt = new Timestamp(System.currentTimeMillis());
 			long timestamps_diff = end_dt.getTime() - start_dt.getTime();

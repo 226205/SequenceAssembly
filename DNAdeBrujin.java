@@ -403,98 +403,126 @@ public class DNAdeBrujin {
 		boolean checked_bool, unique_bool;
 		//horizontal common pieces with vertical subsequence set position
 
-			for(int i = 0; i < yAxissAmount; i++) {
-				if(row_ids.keySet().contains(i)) {
-					unique_bool = true;
+		for(int i = 0; i < yAxissAmount; i++) {
+			if(row_ids.keySet().contains(i)) {
+				unique_bool = true;
+				for(int j = 0; j < yAxissAmount; j++) {
+					if(i != j && row_ids.keySet().contains(j) )
+					{
+						checked_bool = true;
+						for(int k = 0; k < row_ids.get(i).size(); k++) {
+							if(row_ids.get(i).get(k) != row_ids.get(j).get(k)) {
+								checked_bool = false;
+								break;
+							}
+						}
+						if(checked_bool) {
+							unique_bool = false;
+							break;
+						}	
+					}
+				}
+				if(unique_bool) {
 					for(int j = 0; j < yAxissAmount; j++) {
-						if(i != j && row_ids.keySet().contains(j) )
-						{
+						if(column_position_ids.keySet().contains(j)) {
 							checked_bool = true;
-							for(int k = 0; k < row_ids.get(i).size(); k++) {
-								if(row_ids.get(i).get(k) != row_ids.get(j).get(k)) {
+							for(int k = 0; k < column_position_ids.get(j).size(); k++) {
+								if(row_ids.get(i).get(k) != column_position_ids.get(j).get(k)) {
 									checked_bool = false;
 									break;
 								}
 							}
 							if(checked_bool) {
-								unique_bool = false;
+								for(int k = 0; k < horizontal_subseq_ready_set.get(j).getSequence().length; k++) {
+									solved_table[k][j] = horizontal_subseq_ready_set.get(i).getPiece(k);
+								}
+								column_position_ids.remove(j);
+								row_ids.remove(i);
 								break;
 							}	
-						}
-					}
-					if(unique_bool) {
-						for(int j = 0; j < yAxissAmount; j++) {
-							if(column_position_ids.keySet().contains(j)) {
-								checked_bool = true;
-								for(int k = 0; k < column_position_ids.get(j).size(); k++) {
-									if(row_ids.get(i).get(k) != column_position_ids.get(j).get(k)) {
-										checked_bool = false;
-										break;
-									}
-								}
-								if(checked_bool) {									
-									for(int k = 0; k < horizontal_subseq_ready_set.get(j).getSequence().length; k++) {
-										solved_table[k][j] = horizontal_subseq_ready_set.get(i).getPiece(k);
-									}
-									column_position_ids.remove(j);
-									row_ids.remove(i);
-									break;
-								}	
-							}	
 						}	
-
-					}
+					}	
 				}
 			}
+		}
+		
+		print_string = "";
+		file.println("\nAll deterministic rows filled:\n");
+		
+		for(int i = 0; i < yAxissAmount; i++) {
+			for(int j = 0; j < xAxissAmount; j++) {
+				if(solved_table[j][i] != null)
+					print_string = (print_string + solution_table[j][i].getId() + " ");
+				else
+					print_string = (print_string + "_ ");
+			}
+			file.println(print_string);
+			print_string = "";
+		}
 
-			//vertical common pieces with horizontal subsequence set position
-			for(int i = 0; i < xAxissAmount; i++) {
-				if(column_ids.keySet().contains(i)) {
-					unique_bool = true;
+		//vertical common pieces with horizontal subsequence set position
+		for(int i = 0; i < xAxissAmount; i++) {
+			if(column_ids.keySet().contains(i)) {
+				unique_bool = true;
+				for(int j = 0; j < xAxissAmount; j++) {
+					if(i != j && column_ids.keySet().contains(j) )
+					{
+						checked_bool = true;
+						for(int k = 0; k < column_ids.get(i).size(); k++) {
+							if(column_ids.get(i).get(k) != column_ids.get(j).get(k)) {
+								checked_bool = false;
+								break;
+							}
+						}
+						if(checked_bool) {
+							unique_bool = false;
+							break;
+						}	
+					}
+				}
+				if(unique_bool) {
 					for(int j = 0; j < xAxissAmount; j++) {
-						if(i != j && column_ids.keySet().contains(j) )
-						{
+						if(row_position_ids.keySet().contains(j)) {
 							checked_bool = true;
-							for(int k = 0; k < column_ids.get(i).size(); k++) {
-								if(column_ids.get(i).get(k) != column_ids.get(j).get(k)) {
+							for(int k = 0; k < row_position_ids.get(j).size(); k++) {
+								if(column_ids.get(i).get(k) != row_position_ids.get(j).get(k)) {
 									checked_bool = false;
 									break;
 								}
 							}
 							if(checked_bool) {
-								unique_bool = false;
+								for(int k = 0; k < vertical_subseq_ready_set.get(j).getSequence().length; k++) {
+									if(solved_table[j][k] == null)
+										solved_table[j][k] = vertical_subseq_ready_set.get(i).getPiece(k);
+								}
+								row_position_ids.remove(j);
+								column_ids.remove(i);
 								break;
 							}	
-						}
-					}
-					if(unique_bool) {
-						for(int j = 0; j < xAxissAmount; j++) {
-							if(row_position_ids.keySet().contains(j)) {
-								checked_bool = true;
-								for(int k = 0; k < row_position_ids.get(j).size(); k++) {
-									if(column_ids.get(i).get(k) != row_position_ids.get(j).get(k)) {
-										checked_bool = false;
-										break;
-									}
-								}
-								if(checked_bool) {
-									
-									for(int k = 0; k < vertical_subseq_ready_set.get(j).getSequence().length && solved_table[j][k] == null; k++) {
-										solved_table[j][k] = vertical_subseq_ready_set.get(i).getPiece(k);
-									}
-									row_position_ids.remove(j);
-									column_ids.remove(i);
-									break;
-								}	
-							}	
 						}	
-					}
+					}	
 				}
 			}
-			
-			//horizontal supplement
-			for(int i = 0; i < horizontal_subseq_ready_set.size() && row_ids.containsKey(i); i++) {
-				
+		}
+		
+		print_string = "";
+		file.println("\nAll deterministic collumn filled:\n");
+		
+		for(int i = 0; i < yAxissAmount; i++) {
+			for(int j = 0; j < xAxissAmount; j++) {
+				if(solved_table[j][i] != null)
+					print_string = (print_string + solution_table[j][i].getId() + " ");
+				else
+					print_string = (print_string + "_ ");
+			}
+			file.println(print_string);
+			print_string = "";
+		}
+		
+		
+		//horizontal supplement
+		for(int i = 0; i < horizontal_subseq_ready_set.size(); i++) {
+			if(row_ids.containsKey(i));
 				for (int j = 0; j < yAxissAmount; j++) {
 					checked_bool = true;
 					for (int k = 0; k < xAxissAmount; k++) {
@@ -514,11 +542,12 @@ public class DNAdeBrujin {
 					}
 					
 				}
-			}
+		}
+	
+		//vertical supplement
 		
-			//vertical supplement
-			
-			for(int i = 0; i < vertical_subseq_ready_set.size() && column_ids.containsKey(i); i++) {
+		for(int i = 0; i < vertical_subseq_ready_set.size(); i++) {
+			if(column_ids.containsKey(i))
 				for (int j = 0; j < xAxissAmount; j++) {
 					checked_bool = true;
 					for (int k = 0; k < yAxissAmount; k++) {
@@ -538,7 +567,7 @@ public class DNAdeBrujin {
 					}
 					
 				}
-			}
+		}
 			
 		print_string = "";
 		file.println("\nNew, ordered sequence:\n");
