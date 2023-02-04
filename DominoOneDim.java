@@ -8,13 +8,20 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class DominoOneDim {
+	
+	ArrayList<PieceSequence> vertical_subseq_set;
+	ArrayList<PieceSequence> horizontal_subseq_set;
+	ArrayList<PieceSequence> vertical_subseq_ready_set;
+	ArrayList<PieceSequence> horizontal_subseq_ready_set;
+	Piece[][] solved_table;
+	
 	public DominoOneDim(int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount, String file_name) {
-		Piece[][] solved_table = new Piece[xAxissAmount][yAxissAmount];
+		solved_table = new Piece[xAxissAmount][yAxissAmount];
 		HashMap<Integer, ArrayList<Integer>> known_id = new HashMap<Integer, ArrayList<Integer>>();
-		ArrayList<PieceSequence> vertical_subseq_set = new ArrayList<PieceSequence>();
-		ArrayList<PieceSequence> horizontal_subseq_set = new ArrayList<PieceSequence>();
-		ArrayList<PieceSequence> vertical_subseq_ready_set = new ArrayList<PieceSequence>();
-		ArrayList<PieceSequence> horizontal_subseq_ready_set = new ArrayList<PieceSequence>();
+		vertical_subseq_set = new ArrayList<PieceSequence>();
+		horizontal_subseq_set = new ArrayList<PieceSequence>();
+		vertical_subseq_ready_set = new ArrayList<PieceSequence>();
+		horizontal_subseq_ready_set = new ArrayList<PieceSequence>();
 		Piece[] subseq;
 		
 		
@@ -30,7 +37,7 @@ public class DominoOneDim {
 		
 		
 		for(int i = 0; i < yAxissAmount; i++) {
-			print_string = "(";
+			print_string = "";
 			for(int j = 0; j < xAxissAmount; j++) {
 				print_string = (print_string + solution_table[j][i].getId());				
 				if(j + 1 != xAxissAmount)
@@ -572,9 +579,7 @@ public class DominoOneDim {
 							for (int k = 0; k < xAxissAmount; k++)
 								solved_table[k][j] = horizontal_subseq_ready_set.get(i).getPiece(k);
 							
-							horizontal_subseq_ready_set.remove(i);
 							row_ids.remove(i);
-							i--;
 							break;
 						}
 						
@@ -597,9 +602,7 @@ public class DominoOneDim {
 							for (int k = 0; k < yAxissAmount; k++)
 								solved_table[j][k] = vertical_subseq_ready_set.get(i).getPiece(k);
 							
-							vertical_subseq_ready_set.remove(i);
 							column_ids.remove(i);
-							i--;
 							break;
 						}
 						
@@ -800,4 +803,10 @@ public class DominoOneDim {
 			}
 		return error_counter;
 	}
+	
+	public ArrayList<PieceSequence> getVerticalSubseqSet() { return vertical_subseq_set;}
+	public ArrayList<PieceSequence> getHorizontalSubseqSet() { return horizontal_subseq_set;}
+	public ArrayList<PieceSequence> getVerticalSubseqReadySet() { return vertical_subseq_ready_set;}
+	public ArrayList<PieceSequence> getHorizontalSubseqReadySet() { return horizontal_subseq_ready_set;}
+	public Piece[][] getSolvedTable() { return solved_table;}
 }

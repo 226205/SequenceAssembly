@@ -7,13 +7,89 @@ import java.util.Scanner;
 
 public class FileCreator {
 
-	static int dimension_amount, all_pieces_amount, xAxissAmount, yAxissAmount = 1, xAxissSequenceLength, yAxissSequenceLength = 1;
-	static boolean all_pieces_unique, all_pieces_sequence, all_pieces_known;
-	static Piece[][] solution_table;
+	int dimension_amount, all_pieces_amount, xAxissAmount, yAxissAmount = 1, xAxissSequenceLength, yAxissSequenceLength = 1;
+	boolean all_pieces_unique, all_pieces_sequence, all_pieces_known;
+	Piece[][] solution_table;
 	
-	public FileCreator() {
+	public FileCreator(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		String input, file_name;
+		
+		if (args.length == 6 || args.length == 8) {
+			
+			if(IOUtils.fileExist("src/"+ args[0] + ".txt") == 1) {
+				System.out.println("Overriding file src/" + args[0] + ".txt");
+			}
+			if(!args[1].matches("\\d+") || Integer.parseInt(args[1]) < 1 ) {
+				System.out.println("args[1] is incorect. Length of X axiss should be a natural number.");
+				System.exit(1);
+			}
+			if(!args[2].matches("\\d+") || Integer.parseInt(args[2]) < 1 ) {
+				System.out.println("args[2] is incorect. Length of Y axiss should be a natural number.");
+				System.exit(1);
+			}
+			if(!args[3].matches("\\d+") || Integer.parseInt(args[3]) < 1 ) {
+				System.out.println("args[3] is incorect. Amount od different pieces should be between 1 and "+ ( Integer.parseInt(args[1]) * Integer.parseInt(args[2])) + ".");
+				System.exit(1);
+			}
+			if(!(args[4] == "true" || args[4] == "false" ) || (args[4] == "true" && Integer.parseInt(args[3]) != Integer.parseInt(args[1]) * Integer.parseInt(args[2]))) {
+				System.out.println("args[4] is incorect. Flag of piece uniquenes can be set only on 'false' or 'true'. Second option is available only if args[3] = " + ( Integer.parseInt(args[1]) * Integer.parseInt(args[2])));
+				System.exit(1);
+			}
+			if(!(args[5] == "true" || args[5] == "false" )) {
+				System.out.println("args[5] is incorect. Flag for specified elements can be set only on 'false' or 'true'.");
+				System.exit(1);
+			}
+			
+			xAxissAmount = Integer.parseInt(args[1]);
+			yAxissAmount = Integer.parseInt(args[2]);
+			all_pieces_amount = Integer.parseInt(args[3]);
+			
+			if(args[4] == "true") all_pieces_unique = true;
+			else all_pieces_unique = false;
+			
+			if(args[5] == "true") all_pieces_known = true;
+			else all_pieces_known = false;
+			
+			if(dimension_amount > 1) dimension_amount = 2;
+			else dimension_amount = 1;
+			
+			if(args.length == 6) {
+				all_pieces_sequence = true;
+				xAxissSequenceLength = xAxissAmount;
+				yAxissSequenceLength = yAxissAmount;
+			}
+			else {
+				if(!args[6].matches("\\d+") || Integer.parseInt(args[6]) < 1 || Integer.parseInt(args[6]) > xAxissAmount) {
+					System.out.println("args[6] is incorect. Length of X axiss repetition should be a natural number. Lesser than " + xAxissAmount + ".");
+					System.exit(1);
+				}
+				if(!args[7].matches("\\d+") || Integer.parseInt(args[7]) < 1 || Integer.parseInt(args[7]) > xAxissAmount) {
+					System.out.println("args[7] is incorect. Length of X axiss repetition should be a natural number. Lesser than " + xAxissAmount + ".");
+					System.exit(1);
+				}
+				all_pieces_sequence = false;
+				xAxissSequenceLength = Integer.parseInt(args[6]);
+				yAxissSequenceLength = Integer.parseInt(args[7]);
+				
+			}
+			
+			s_WriteToFile("src/"+ args[0] + ".txt");
+			System.out.println("\nGenerated Sequence:");
+			
+			for(int i = 0; i < yAxissAmount; i++) {
+				System.out.println("");
+				for(int j = 0; j < xAxissAmount; j++)
+					System.out.print(" " + solution_table[j][i].getId());
+			}
+			
+			System.out.println("\nCreated sequence successfully saved to file: project_directory_path/src/" + args[0] + ".txt" );
+			System.exit(1);
+		}
+		
+
+		if(args.length < 7 && args.length > 0)
+			System.out.println("Amount of passed parameters is insufficient. Program will work as if none has been passed.");
 		
 		dimension_amount = intQuery(scanner, "Press 1 for 1D sequence, 2 for 2D sequence: ", 2);
 		xAxissAmount = intQuery(scanner, "Enter the width of seqence (possible input: natural numbers >= 1): ", Integer.MAX_VALUE);
@@ -78,7 +154,7 @@ public class FileCreator {
 	}
 	
 	public static void main(String[] args) {
-		new FileCreator();
+		new FileCreator(args);
 	}
 	
 	private boolean boolQuery(Scanner scanner, String prnt_msg) {

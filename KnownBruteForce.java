@@ -8,8 +8,9 @@ import java.util.Scanner;
 
 public class KnownBruteForce {
 	
+	Piece[][] solved_table;
 	public KnownBruteForce(ArrayList<Piece> local_piece_list, int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount, String file_name) {
-		Piece[][] solved_table = new Piece[xAxissAmount][yAxissAmount];
+		solved_table = new Piece[xAxissAmount][yAxissAmount];
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS");  
 		LocalDateTime now = LocalDateTime.now();  
 		String print_string = "";
@@ -151,4 +152,6 @@ public class KnownBruteForce {
 			}
 		return error_counter;
 	}
+	
+	public Piece[][] getSolvedTable() { return solved_table;}
 }

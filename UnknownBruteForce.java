@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class UnknownBruteForce {
+	
+	Piece[][] solved_table;
 	public UnknownBruteForce(ArrayList<Piece> local_piece_list, int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount, String file_name) {
-		Piece[][] solved_table = new Piece[xAxissAmount][yAxissAmount];
+		solved_table = new Piece[xAxissAmount][yAxissAmount];
 		ArrayList<Integer> random_edge = new ArrayList<Integer>(Arrays.asList(0,1,2,3)); 
 		HashMap<Integer, Integer> known_id = new HashMap<Integer, Integer>();
 		
@@ -190,4 +192,6 @@ public class UnknownBruteForce {
 			}
 		return error_counter;
 	}
+	
+	public Piece[][] getSolvedTable() { return solved_table;}
 }
