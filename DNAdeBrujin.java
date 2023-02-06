@@ -80,7 +80,6 @@ public class DNAdeBrujin {
 			
 		});
 		
-		
 		int max_common_seq_vertical = 1, max_common_seq_horizontal = 1;
 		for(int i = 0; i < max_values.size(); i++) {
 			if (max_values.get(i) >= xAxissAmount + yAxissAmount && max_values.get(i) - (xAxissAmount + yAxissAmount) > max_common_seq_vertical)
@@ -163,7 +162,6 @@ public class DNAdeBrujin {
 		PieceSequence chosen_sqe;
 		Piece[] piece_seq;		
 		
-		
 		//horizontal sequence combining
 
 
@@ -173,12 +171,14 @@ public class DNAdeBrujin {
 			
 			if(chosen_sqe.getSequence().length == xAxissAmount) {
 			    //check if received subsequence is a complete one-dimensional row
-			    //if true, deduplicate all subsequenceswhich can be filled in
+			    //if true, deduplicate all subsequences which can be filled in
 			    //this sequence and finally place this sequence in row set
 				horizontal_subseq_ready_set.add(chosen_sqe);
 				for(int j = 0; j < horizontal_subseq_set.size(); j++) {
-					if(chosen_sqe.isOtherIdSequenceWithin(horizontal_subseq_set.get(j).getSequence()))
+					if(chosen_sqe.isOtherIdSequenceWithin(horizontal_subseq_set.get(j).getSequence())) {
 						horizontal_subseq_set.remove(j);
+						j--;
+					}
 				}
 				continue;
 			}
@@ -207,9 +207,12 @@ public class DNAdeBrujin {
 		                //and finally place this sequence in row set
 						horizontal_subseq_ready_set.add(chosen_sqe);
 						for(int j = 0; j < horizontal_subseq_set.size(); j++) {
-							if(chosen_sqe.isOtherIdSequenceWithin(horizontal_subseq_set.get(j).getSequence()))
+							if(chosen_sqe.isOtherIdSequenceWithin(horizontal_subseq_set.get(j).getSequence())) {
 								horizontal_subseq_set.remove(j);
+								j--;
+							}
 						}
+						i--;
 						break;
 					}
 					else { 
@@ -235,9 +238,12 @@ public class DNAdeBrujin {
 		                //and finally place this sequence in row set
 						horizontal_subseq_ready_set.add(chosen_sqe);
 						for(int j = 0; j < horizontal_subseq_set.size(); j++) {
-							if(chosen_sqe.isOtherIdSequenceWithin(horizontal_subseq_set.get(j).getSequence()))
+							if(chosen_sqe.isOtherIdSequenceWithin(horizontal_subseq_set.get(j).getSequence())) {
 								horizontal_subseq_set.remove(j);
+								j--;
+							}
 						}
+						i--;
 						break;
 					}
 					else {
@@ -260,8 +266,10 @@ public class DNAdeBrujin {
 			    //this sequence and finally place this sequence in row set
 				vertical_subseq_ready_set.add(chosen_sqe);
 				for(int j = 0; j < vertical_subseq_set.size(); j++) {
-					if(chosen_sqe.isOtherIdSequenceWithin(vertical_subseq_set.get(j).getSequence()))
+					if(chosen_sqe.isOtherIdSequenceWithin(vertical_subseq_set.get(j).getSequence())) {
 						vertical_subseq_set.remove(j);
+						j--;
+					}
 				}
 				continue;
 			}
@@ -290,9 +298,12 @@ public class DNAdeBrujin {
 		                //and finally place this sequence in row set
 						vertical_subseq_ready_set.add(chosen_sqe);
 						for(int j = 0; j < vertical_subseq_set.size(); j++) {
-							if(chosen_sqe.isOtherIdSequenceWithin(vertical_subseq_set.get(j).getSequence()))
+							if(chosen_sqe.isOtherIdSequenceWithin(vertical_subseq_set.get(j).getSequence())) {
 								vertical_subseq_set.remove(j);
+								j--;
+							}
 						}
+						i--;
 						break;
 					}
 					else {
@@ -317,9 +328,12 @@ public class DNAdeBrujin {
 		                //and finally place this sequence in row set
 						vertical_subseq_ready_set.add(chosen_sqe);
 						for(int j = 0; j < vertical_subseq_set.size(); j++) {
-							if(chosen_sqe.isOtherIdSequenceWithin(vertical_subseq_set.get(j).getSequence()))
+							if(chosen_sqe.isOtherIdSequenceWithin(vertical_subseq_set.get(j).getSequence())) {
 								vertical_subseq_set.remove(j);
+								j--;
+							}
 						}
+						i--;
 						break;
 					}
 					else {
@@ -329,7 +343,6 @@ public class DNAdeBrujin {
 				}
 			}
 		}
-		
 		
 		print_string = "\n\nThe subsequences were assembled into: " + horizontal_subseq_ready_set.size() + " completed rows";
 		if(dimension_amount == 2) 
@@ -364,7 +377,6 @@ public class DNAdeBrujin {
 			}
 		}
 		
-		
 		HashMap<Integer, ArrayList<Integer>> row_ids = new HashMap<Integer, ArrayList<Integer>>();
 		HashMap<Integer, ArrayList<Integer>> column_ids = new HashMap<Integer, ArrayList<Integer>>();
 		HashMap<Integer, ArrayList<Integer>> row_position_ids = new HashMap<Integer, ArrayList<Integer>>();
@@ -396,7 +408,6 @@ public class DNAdeBrujin {
 			column_ids.put(i, current_list);
 			row_position_ids.put(i, current_position_list);
 		}
-		
 		
 		if(dimension_amount == 2) {
 			
@@ -453,8 +464,7 @@ public class DNAdeBrujin {
 			}
 		}
 		
-		print_string = "";
-		
+		print_string = "";		
 		
 		boolean checked_bool, unique_bool;
 		//horizontal common pieces with vertical subsequence set position

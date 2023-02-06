@@ -27,7 +27,8 @@ public class PieceSequence {
 	public Piece[] getSequence() {return sequence_pieces;}
 	public Piece[] getLmer() {return L_mer;}
 	public Piece[] getRmer() {return R_mer;}
-	public Piece getPiece(int piece_num) {return sequence_pieces[piece_num];}
+	public Piece getPiece(int piece_num) {	if(piece_num >= sequence_pieces.length) System.out.println("za duzy");
+											return sequence_pieces[piece_num];}
 	public boolean getIfxAxissSeq() {return is_xAxissSeq;}
 	
 	public boolean isOtherIdSequenceWithin(Piece[] checked_sequence) {
