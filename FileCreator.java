@@ -98,7 +98,9 @@ public class FileCreator {
 		if (all_pieces_unique == true)				
 			all_pieces_known = boolQuery(scanner, "Press 1 for specified elements (is it known that in position [n][m] occurs X etement?), 2 for not specified:");
 		else all_pieces_known = false;
-		all_pieces_sequence = boolQuery(scanner, "Press 1 for plain sequence, 2 periodical sequence.");
+		if(all_pieces_unique == false)
+			all_pieces_sequence = boolQuery(scanner, "Press 1 for plain sequence, 2 periodical sequence.");
+		else all_pieces_sequence = true;
 		if (all_pieces_sequence == false)
 			xAxissSequenceLength = intQuery(scanner, "Enter the width of entered sequence (possible input: natural numbers >= 1)", Integer.MAX_VALUE);
 		else xAxissSequenceLength = xAxissAmount;
