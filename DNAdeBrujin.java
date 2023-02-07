@@ -15,8 +15,11 @@ public class DNAdeBrujin {
 	ArrayList<PieceSequence> vertical_subseq_ready_set;
 	ArrayList<PieceSequence> horizontal_subseq_ready_set;
 	Piece[][] solved_table;
+	static Timestamp algoritm_start_dt,  algoritm_end_dt;
+	
 	
 	public DNAdeBrujin(int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount, String file_name) {
+		algoritm_start_dt = new Timestamp(System.currentTimeMillis());
 		solved_table = new Piece[xAxissAmount][yAxissAmount];
 		HashMap<Integer, ArrayList<Integer>> known_id = new HashMap<Integer, ArrayList<Integer>>();
 		vertical_subseq_set = new ArrayList<PieceSequence>();
@@ -600,46 +603,50 @@ public class DNAdeBrujin {
 		//horizontal supplement
 		for(int i = 0; i < horizontal_subseq_ready_set.size(); i++) {
 			if(row_ids.containsKey(i));
-				for (int j = 0; j < yAxissAmount; j++) {
-					checked_bool = true;
-					for (int k = 0; k < xAxissAmount; k++) {
-						if(solved_table[k][j] != null && solved_table[k][j].getId() != horizontal_subseq_ready_set.get(i).getPiece(k).getId()) {
-							checked_bool = false;
+				for (int j = 0; j < yAxissAmount; j++) 
+					if(column_position_ids.containsKey(j)){
+						checked_bool = true;
+						for (int k = 0; k < xAxissAmount; k++) {
+							if(solved_table[k][j] != null && solved_table[k][j].getId() != horizontal_subseq_ready_set.get(i).getPiece(k).getId()) {
+								checked_bool = false;
+								break;
+							}		
+						}
+						if (checked_bool) {
+							for (int k = 0; k < xAxissAmount; k++)
+								solved_table[k][j] = horizontal_subseq_ready_set.get(i).getPiece(k);
+							
+							column_position_ids.remove(j);
+							row_ids.remove(i);
 							break;
-						}		
-					}
-					if (checked_bool) {
-						for (int k = 0; k < xAxissAmount; k++)
-							solved_table[k][j] = horizontal_subseq_ready_set.get(i).getPiece(k);
+						}
 						
-						row_ids.remove(i);
-						break;
 					}
-					
-				}
 		}
-	
+
 		//vertical supplement
-		
+			
 		for(int i = 0; i < vertical_subseq_ready_set.size(); i++) {
 			if(column_ids.containsKey(i))
-				for (int j = 0; j < xAxissAmount; j++) {
-					checked_bool = true;
-					for (int k = 0; k < yAxissAmount; k++) {
-						if(solved_table[j][k] != null && solved_table[j][k].getId() != vertical_subseq_ready_set.get(i).getPiece(k).getId()) {
-							checked_bool = false;
+				for (int j = 0; j < xAxissAmount; j++)  
+					if(row_position_ids.containsKey(j)){
+						checked_bool = true;
+						for (int k = 0; k < yAxissAmount; k++) {
+							if(solved_table[j][k] != null && solved_table[j][k].getId() != vertical_subseq_ready_set.get(i).getPiece(k).getId()) {
+								checked_bool = false;
+								break;
+							}		
+						}
+						if (checked_bool) {
+							for (int k = 0; k < yAxissAmount; k++)
+								solved_table[j][k] = vertical_subseq_ready_set.get(i).getPiece(k);
+							
+							row_position_ids.remove(j);
+							column_ids.remove(i);
 							break;
-						}		
-					}
-					if (checked_bool) {
-						for (int k = 0; k < yAxissAmount; k++)
-							solved_table[j][k] = vertical_subseq_ready_set.get(i).getPiece(k);
+						}
 						
-						column_ids.remove(i);
-						break;
 					}
-					
-				}
 		}
 			
 		print_string = "";
@@ -662,14 +669,16 @@ public class DNAdeBrujin {
 		}
 		
 		file.println("\n");
-		int rezult = new ShowResults(solved_table, solution_table, "DeBrujin", file_name).getErrorCount();
+		algoritm_end_dt = new Timestamp(System.currentTimeMillis());
+		
+		int rezult = new ShowResults(solved_table, solution_table, "DeBrujin", "src/DNAdeBrujin_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt", algoritm_end_dt.getTime() - algoritm_start_dt.getTime()).getErrorCount();
 		if(rezult == 0)
 			file.println("Received sequences are equal");
 		else
 			file.println("Received sequences differ in " + rezult + " places");
 		
 		file.println("Run finished at " + dtf.format(now));
-
+		file.println("Algoritm was finished in " + (algoritm_end_dt.getTime() - algoritm_start_dt.getTime()) + "ms");
 		file.close();
 		
 	}
@@ -724,8 +733,11 @@ public class DNAdeBrujin {
 			end_dt = new Timestamp(System.currentTimeMillis());
 			long timestamps_diff = end_dt.getTime() - start_dt.getTime();
 			
-			System.out.println("\nBegin timestamp: " + start_dt
-					+ "\nFinish timestamp: " + end_dt
+			System.out.println("\nExecution begin timestamp: " + start_dt
+					+ "\nAlgoritm execution begin timestamp: " + algoritm_start_dt
+					+ "\nAlgoritm execution finish timestamp: " + algoritm_end_dt
+					+ "\nAlgoritm execution time: " + (algoritm_end_dt.getTime() - algoritm_start_dt.getTime()) + "ms"
+					+ "\nExecution finish timestamp: " + end_dt
 					+ "\nExecution time: " + timestamps_diff + "ms");
 		
 		}

@@ -9,7 +9,10 @@ import java.util.Scanner;
 public class KnownBruteForce {
 	
 	Piece[][] solved_table;
+	static Timestamp algoritm_start_dt,  algoritm_end_dt;
+	
 	public KnownBruteForce(ArrayList<Piece> local_piece_list, int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount, String file_name) {
+		algoritm_start_dt = new Timestamp(System.currentTimeMillis());
 		solved_table = new Piece[xAxissAmount][yAxissAmount];
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS");  
 		LocalDateTime now = LocalDateTime.now();  
@@ -66,14 +69,16 @@ public class KnownBruteForce {
 		}
 		
 		file.println("\n");
-		int rezult = new ShowResults(solved_table, solution_table, "Known Puzzle", file_name).getErrorCount();
+		algoritm_end_dt = new Timestamp(System.currentTimeMillis());
+		
+		int rezult = new ShowResults(solved_table, solution_table, "Known Puzzle", "KnownPuzzles_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt", algoritm_end_dt.getTime() - algoritm_start_dt.getTime()).getErrorCount();
 		if(rezult == 0)
 			file.println("Received sequences are equal");
 		else
 			file.println("Received sequences differ in " + rezult + " places");
 
 		file.println("Run finished at " + dtf.format(now));
-		
+		file.println("Algoritm was finished in " + (algoritm_end_dt.getTime() - algoritm_start_dt.getTime()) + "ms");
 		file.close();
 	}
 	
@@ -125,7 +130,7 @@ public class KnownBruteForce {
 		ArrayList<Piece> local_piece_list = new ArrayList<Piece>();
 		local_piece_list.addAll(piece_list);
 		Collections.shuffle(local_piece_list);
-		
+	
 		if(f_reader.isAllPiecesUnique()) {
 			
 			new KnownBruteForce(local_piece_list, xAxissAmount, yAxissAmount, solution_table, dimension_amount, file_name);
@@ -133,8 +138,11 @@ public class KnownBruteForce {
 			end_dt = new Timestamp(System.currentTimeMillis());
 			long timestamps_diff = end_dt.getTime() - start_dt.getTime();
 			
-			System.out.println("\nBegin timestamp: " + start_dt
-					+ "\nFinish timestamp: " + end_dt
+			System.out.println("\nExecution begin timestamp: " + start_dt
+					+ "\nAlgoritm execution begin timestamp: " + algoritm_start_dt
+					+ "\nAlgoritm execution finish timestamp: " + algoritm_end_dt
+					+ "\nAlgoritm execution time: " + (algoritm_end_dt.getTime() - algoritm_start_dt.getTime()) + "ms"
+					+ "\nExecution finish timestamp: " + end_dt
 					+ "\nExecution time: " + timestamps_diff + "ms");
 		
 		}

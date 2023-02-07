@@ -16,7 +16,7 @@ public class FileReader {
 		int id, x, y, counter;
 		csv_line = stdin.stringInputLine();
 		
-		try {	
+		try {
 			
 			delimiter_index[0] = csv_line.indexOf(";");
 			delimiter_index[1] = csv_line.indexOf(";", delimiter_index[0] + 1);

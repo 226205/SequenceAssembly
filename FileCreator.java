@@ -85,7 +85,7 @@ public class FileCreator {
 			System.out.println("\nCreated sequence successfully saved to file: project_directory_path/src/" + args[0] + ".txt" );
 			System.exit(1);
 		}
-		
+	
 
 		if(args.length < 7 && args.length > 0)
 			System.out.println("Amount of passed parameters is insufficient. Program will work as if none has been passed.");

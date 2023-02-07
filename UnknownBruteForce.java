@@ -11,7 +11,10 @@ import java.util.Scanner;
 public class UnknownBruteForce {
 	
 	Piece[][] solved_table;
+	static Timestamp algoritm_start_dt,  algoritm_end_dt;
+	
 	public UnknownBruteForce(ArrayList<Piece> local_piece_list, int xAxissAmount, int yAxissAmount, Piece[][] solution_table, int dimension_amount, String file_name) {
+		algoritm_start_dt = new Timestamp(System.currentTimeMillis());
 		solved_table = new Piece[xAxissAmount][yAxissAmount];
 		ArrayList<Integer> random_edge = new ArrayList<Integer>(Arrays.asList(0,1,2,3)); 
 		HashMap<Integer, Integer> known_id = new HashMap<Integer, Integer>();
@@ -37,7 +40,7 @@ public class UnknownBruteForce {
 		}
 		
 		file.println("\n");
-		
+	
 		
 		Piece piece = local_piece_list.get(0);
 		local_piece_list.remove(0);
@@ -107,14 +110,16 @@ public class UnknownBruteForce {
 		}
 		
 		file.println("\n");
-		int rezult = new ShowResults(solved_table, solution_table, "Plain Puzzle", file_name).getErrorCount();
+		algoritm_end_dt = new Timestamp(System.currentTimeMillis());
+		
+		int rezult = new ShowResults(solved_table, solution_table, "Plain Puzzle", "src/PlainPuzzle_" + file_name + "_" + dtf.format(now) + "_experiment_log.txt", algoritm_end_dt.getTime() - algoritm_start_dt.getTime()).getErrorCount();
 		if(rezult == 0)
 			file.println("Received sequences are equal");
 		else
 			file.println("Received sequences differ in " + rezult + " places");
 
 		file.println("Run finished at " + dtf.format(now));
-		
+		file.println("Algoritm was finished in " + (algoritm_end_dt.getTime() - algoritm_start_dt.getTime()) + "ms");
 		file.close();
 	}
 	
@@ -174,8 +179,11 @@ public class UnknownBruteForce {
 			end_dt = new Timestamp(System.currentTimeMillis());
 			long timestamps_diff = end_dt.getTime() - start_dt.getTime();
 			
-			System.out.println("\nBegin timestamp: " + start_dt
-					+ "\nFinish timestamp: " + end_dt
+			System.out.println("\nExecution begin timestamp: " + start_dt
+					+ "\nAlgoritm execution begin timestamp: " + algoritm_start_dt
+					+ "\nAlgoritm execution finish timestamp: " + algoritm_end_dt
+					+ "\nAlgoritm execution time: " + (algoritm_end_dt.getTime() - algoritm_start_dt.getTime()) + "ms"
+					+ "\nExecution finish timestamp: " + end_dt
 					+ "\nExecution time: " + timestamps_diff + "ms");
 		}
 		else

@@ -9,8 +9,8 @@ import javax.swing.JTextArea;
 
 public class ShowResults {
 	int error_counter;
-	
-	public ShowResults(Piece[][] solved_table, Piece[][] solution_table, String algoritm_name, String file_name) {
+
+	public ShowResults(Piece[][] solved_table, Piece[][] solution_table, String algoritm_name, String file_name, Long execution_time) {
 		
 		error_counter = 0;
 		if (solved_table.length != solution_table.length || solved_table[0].length != solution_table[0].length)
@@ -29,7 +29,10 @@ public class ShowResults {
 		for(int x = 0; x < solution_table.length; x++) {
 			for(int y = 0; y < solution_table[0].length; y++) {
 				data1[y][x] = Integer.toString(solution_table[x][y].getId());
-				data2[y][x] = Integer.toString(solved_table[x][y].getId());	
+				if(solved_table[x][y] != null)
+					data2[y][x] = Integer.toString(solved_table[x][y].getId());
+				else 
+					data2[y][x] = null;
 			}
 			
 		}
@@ -48,12 +51,12 @@ public class ShowResults {
 		JTextArea ta = new JTextArea();
 		
 		if(error_counter == 0)
-			ta.setText("Finished executing " + algoritm_name + " algoritm. \nReceived sequences are equal.\nExact partial results are available in log files in folder src/" + file_name);
+			ta.setText("Finished executing " + algoritm_name + " algoritm. \nReceived sequences are equal.\nAlgoritm executed in " + execution_time + "ms.\nExact partial results are available in log files in folder:\n    " + file_name);
 		else
-			ta.setText("Finished executing " + algoritm_name + " algoritm. \nReceived sequences differ in " + error_counter + " places.\nExact partial results are available in log files in folder src/" + file_name);
+			ta.setText("Finished executing " + algoritm_name + " algoritm. \nReceived sequences differ in " + error_counter + " places.\nAlgoritm executed in " + execution_time + "ms.\nExact partial results are available in log files in folder:\n    " + file_name);
 
 		ta.setEditable(false);
-		ta.setBounds(450, 560, 400, 60);
+		ta.setBounds(430, 560, 420, 88);
 
 		jt1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		jt2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
