@@ -7,6 +7,27 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/* examples of seq files
+01_same_element.txt
+02_half.txt
+03_indeterminate.txt
+04_indeterminate.txt
+05_single.txt
+06_linear.txt
+07_square.txt
+08_square.txt
+09_rectangular.txt
+10_long_linear.txt
+11_long_rectangle.txt
+12_puzzle.txt
+13_linear_puzzle.txt
+14_long_linear_puzzle.txt
+15_big_puzzle.txt
+16_big_rectangle_puzzle.txt
+17_big_dna_similar_rows.txt
+18_big_dna.txt
+*/
+
 public class DominoOneDim {
 	
 	ArrayList<PieceSequence> vertical_subseq_set;
@@ -118,7 +139,7 @@ public class DominoOneDim {
 			for(int i = 0; i < horizontal_subseq_set.size(); i++) {
 				for(int j = i + 1; j < horizontal_subseq_set.size(); j++) {
 					if(PieceSequence.isOtherIdSequenceOneDiffOnEdge(horizontal_subseq_set.get(i).getSequence(), horizontal_subseq_set.get(j).getSequence())) {
-
+						
 						check = false;
 						horizontal_subseq_set.clear();
 						max_common_seq_horizontal++;
@@ -149,6 +170,7 @@ public class DominoOneDim {
 				for(int i = 0; i < vertical_subseq_set.size(); i++) {
 					for(int j = i + 1; j < vertical_subseq_set.size(); j++) {
 						if(PieceSequence.isOtherIdSequenceOneDiffOnEdge(vertical_subseq_set.get(i).getSequence(), vertical_subseq_set.get(j).getSequence())) {
+							
 							check = false;
 							vertical_subseq_set.clear();
 							max_common_seq_vertical++;
@@ -200,7 +222,7 @@ public class DominoOneDim {
 			}
 		}
 			
-		
+
 		Collections.shuffle(horizontal_subseq_set);
 		Collections.shuffle(vertical_subseq_set);
 		
@@ -237,8 +259,6 @@ public class DominoOneDim {
 						horizontal_subseq_set.remove(i);
 						i=-1;
 
-						file.println(horizontal_subseq_set.size() + "  " + horizontal_subseq_ready_set.size() + "  " + new_seq.getSequence().length);
-
 						if(new_seq.getSequence().length == xAxissAmount) {
 			                //if new subsequence has maximum possible length 
 			                //then it's stored in separate subsequence set for
@@ -272,7 +292,6 @@ public class DominoOneDim {
 						new_seq = new PieceSequence(piece_seq, true);
 						horizontal_subseq_set.remove(i);
 						i=-1;
-						file.println(horizontal_subseq_set.size() + "  " + horizontal_subseq_ready_set.size() + "  " + new_seq.getSequence().length);
 						if(new_seq.getSequence().length == xAxissAmount) {
 			                //if new subsequence has maximum possible length 
 			                //then it's stored in separate subsequence set for
@@ -483,7 +502,7 @@ public class DominoOneDim {
 				file.println(print_string);
 			}
 		}
-	
+
 		print_string = "";
 		
 		boolean checked_bool, unique_bool;
@@ -497,7 +516,7 @@ public class DominoOneDim {
 					{
 						checked_bool = true;
 						for(int k = 0; k < row_ids.get(i).size(); k++) {
-							if(row_ids.get(i).get(k) != row_ids.get(j).get(k)) {
+							if(row_ids.get(i).get(k).intValue() != row_ids.get(j).get(k).intValue()) {
 								checked_bool = false;
 								break;
 							}
@@ -508,16 +527,19 @@ public class DominoOneDim {
 						}	
 					}
 				}
+
 				if(unique_bool) {
 					for(int j = 0; j < yAxissAmount; j++) {
 						if(column_position_ids.keySet().contains(j)) {
 							checked_bool = true;
+
 							for(int k = 0; k < column_position_ids.get(j).size(); k++) {
-								if(row_ids.get(i).get(k) != column_position_ids.get(j).get(k)) {
+								if(row_ids.get(i).get(k).intValue() != column_position_ids.get(j).get(k).intValue()) {
 									checked_bool = false;
 									break;
 								}
 							}
+							
 							if(checked_bool) {
 								for(int k = 0; k < horizontal_subseq_ready_set.get(j).getSequence().length; k++) {
 									solved_table[k][j] = horizontal_subseq_ready_set.get(i).getPiece(k);
@@ -571,16 +593,19 @@ public class DominoOneDim {
 						}	
 					}
 				}
+				
 				if(unique_bool) {
 					for(int j = 0; j < xAxissAmount; j++) {
 						if(row_position_ids.keySet().contains(j)) {
 							checked_bool = true;
+							
 							for(int k = 0; k < row_position_ids.get(j).size(); k++) {
-								if(column_ids.get(i).get(k) != row_position_ids.get(j).get(k)) {
+								if(column_ids.get(i).get(k).intValue() != row_position_ids.get(j).get(k).intValue()) {
 									checked_bool = false;
 									break;
 								}
 							}
+
 							if(checked_bool) {
 								for(int k = 0; k < vertical_subseq_ready_set.get(j).getSequence().length; k++) {
 									if(solved_table[j][k] == null)

@@ -8,6 +8,27 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
 
+/* examples of seq files
+01_same_element.txt
+02_half.txt
+03_indeterminate.txt
+04_indeterminate.txt
+05_single.txt
+06_linear.txt
+07_square.txt
+08_square.txt
+09_rectangular.txt
+10_long_linear.txt
+11_long_rectangle.txt
+12_puzzle.txt
+13_linear_puzzle.txt
+14_long_linear_puzzle.txt
+15_big_puzzle.txt
+16_big_rectangle_puzzle.txt
+17_big_dna_similar_rows.txt
+18_big_dna.txt
+*/
+
 public class DNAdeBrujin {
 	
 	ArrayList<PieceSequence> vertical_subseq_set;
@@ -524,7 +545,7 @@ public class DNAdeBrujin {
 					{
 						checked_bool = true;
 						for(int k = 0; k < row_ids.get(i).size(); k++) {
-							if(row_ids.get(i).get(k) != row_ids.get(j).get(k)) {
+							if(row_ids.get(i).get(k).intValue() != row_ids.get(j).get(k).intValue()) {
 								checked_bool = false;
 								break;
 							}
@@ -540,7 +561,7 @@ public class DNAdeBrujin {
 						if(column_position_ids.keySet().contains(j)) {
 							checked_bool = true;
 							for(int k = 0; k < column_position_ids.get(j).size(); k++) {
-								if(row_ids.get(i).get(k) != column_position_ids.get(j).get(k)) {
+								if(row_ids.get(i).get(k).intValue() != column_position_ids.get(j).get(k).intValue()) {
 									checked_bool = false;
 									break;
 								}
@@ -587,7 +608,7 @@ public class DNAdeBrujin {
 					{
 						checked_bool = true;
 						for(int k = 0; k < column_ids.get(i).size(); k++) {
-							if(column_ids.get(i).get(k) != column_ids.get(j).get(k)) {
+							if(column_ids.get(i).get(k).intValue() != column_ids.get(j).get(k).intValue()) {
 								checked_bool = false;
 								break;
 							}
@@ -603,7 +624,7 @@ public class DNAdeBrujin {
 						if(row_position_ids.keySet().contains(j)) {
 							checked_bool = true;
 							for(int k = 0; k < row_position_ids.get(j).size(); k++) {
-								if(column_ids.get(i).get(k) != row_position_ids.get(j).get(k)) {
+								if(column_ids.get(i).get(k).intValue() != row_position_ids.get(j).get(k).intValue()) {
 									checked_bool = false;
 									break;
 								}

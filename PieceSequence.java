@@ -69,6 +69,8 @@ public class PieceSequence {
 		}
 		else
 			return false;
+		if(count == 0) return true;
+		
 		if(oryginal_sequence[0].getId() != checked_sequence[0].getId() && oryginal_sequence[oryginal_sequence.length - 1].getId() == checked_sequence[checked_sequence.length - 1].getId() ||
 				oryginal_sequence[0].getId() == checked_sequence[0].getId() && oryginal_sequence[oryginal_sequence.length - 1].getId() != checked_sequence[checked_sequence.length - 1].getId())
 			return true;
