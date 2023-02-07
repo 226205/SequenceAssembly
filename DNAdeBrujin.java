@@ -84,46 +84,90 @@ public class DNAdeBrujin {
 		});
 		
 		int max_common_seq_vertical = 1, max_common_seq_horizontal = 1;
+		boolean check;
 		for(int i = 0; i < max_values.size(); i++) {
 			if (max_values.get(i) >= xAxissAmount + yAxissAmount && max_values.get(i) - (xAxissAmount + yAxissAmount) > max_common_seq_vertical)
 				max_common_seq_vertical = max_values.get(i) - (xAxissAmount + yAxissAmount);
 			if (max_values.get(i) < xAxissAmount + yAxissAmount && max_values.get(i) > max_common_seq_horizontal)
 				max_common_seq_horizontal = max_values.get(i);
 		}
-			
-		print_string = "\nFound size of the maximum repeated subsequence in x-axis: " + max_common_seq_horizontal;
-		if (dimension_amount == 2) 
-			print_string = print_string + " and in Y-axiss: " + max_common_seq_vertical;
-		file.println(print_string);
 		
 		if (max_common_seq_vertical + 2 < yAxissAmount) max_common_seq_vertical += 2; else max_common_seq_vertical = yAxissAmount;  //subsequences become deterministic when their length >= K + 2 and lesser than axiss length, K is the greatest repeated subsequence in sequence
 		if (max_common_seq_horizontal + 2 < xAxissAmount) max_common_seq_horizontal+= 2; else max_common_seq_horizontal = xAxissAmount;
 
 		Random rand = new Random();
 		int repetition_amount;
+		check = false;
 		
-		for(int y = 0; y < yAxissAmount; y++)
-			for(int x = max_common_seq_horizontal - 1; x < xAxissAmount; x++) {
-				subseq = new Piece[max_common_seq_horizontal];
-				for(int i = 0; i < max_common_seq_horizontal; i++) {
-					subseq[i] = solution_table[x - max_common_seq_horizontal + 1 + i][y];
-				}
-				repetition_amount = rand.nextInt(5) + 1;
-				for (int g = 0; g < repetition_amount; g++)
-					horizontal_subseq_set.add(new PieceSequence(subseq, true, max_common_seq_horizontal - 1));
-			}
-			
-		if(dimension_amount == 2)
-			for(int x = 0; x < xAxissAmount; x++)
-				for(int y = max_common_seq_vertical - 1; y < yAxissAmount; y++) {
-					subseq = new Piece[max_common_seq_vertical];
-					for(int i = 0; i < max_common_seq_vertical; i++) {
-						subseq[i] = solution_table[x][y - max_common_seq_vertical + 1 + i];
+		while(check == false) {// check if pesymistic case
+		
+			for(int y = 0; y < yAxissAmount; y++)
+				for(int x = max_common_seq_horizontal - 1; x < xAxissAmount; x++) {
+					subseq = new Piece[max_common_seq_horizontal];
+					for(int i = 0; i < max_common_seq_horizontal; i++) {
+						subseq[i] = solution_table[x - max_common_seq_horizontal + 1 + i][y];
 					}
 					repetition_amount = rand.nextInt(5) + 1;
 					for (int g = 0; g < repetition_amount; g++)
-						vertical_subseq_set.add(new PieceSequence(subseq, false, max_common_seq_vertical - 1));
+						horizontal_subseq_set.add(new PieceSequence(subseq, true, max_common_seq_horizontal - 1));
 				}
+			if(max_common_seq_horizontal == xAxissAmount)
+				break;
+			
+			check = true;
+			for(int i = 0; i < horizontal_subseq_set.size(); i++) {
+				for(int j = i + 1; j < horizontal_subseq_set.size(); j++) {
+					if(horizontal_subseq_set.get(i) != horizontal_subseq_set.get(j) && PieceSequence.isOtherIdSequenceOneDiffOnEdge(horizontal_subseq_set.get(i).getSequence(), horizontal_subseq_set.get(j).getSequence())) {
+						
+						check = false;
+						horizontal_subseq_set.clear();
+						max_common_seq_horizontal++;
+						break;
+					}
+				}
+				if(!check) {
+					break;
+				}
+			}
+		}
+		
+		check = false;
+			
+		if(dimension_amount == 2)
+			while(check == false) {
+				for(int x = 0; x < xAxissAmount; x++)
+					for(int y = max_common_seq_vertical - 1; y < yAxissAmount; y++) {
+						subseq = new Piece[max_common_seq_vertical];
+						for(int i = 0; i < max_common_seq_vertical; i++) {
+							subseq[i] = solution_table[x][y - max_common_seq_vertical + 1 + i];
+						}
+						repetition_amount = rand.nextInt(5) + 1;
+						for (int g = 0; g < repetition_amount; g++)
+							vertical_subseq_set.add(new PieceSequence(subseq, false, max_common_seq_vertical - 1));
+					}
+				if(max_common_seq_vertical == yAxissAmount)
+					break;
+				
+				check = true;
+				for(int i = 0; i < vertical_subseq_set.size(); i++) {
+					for(int j = i + 1; j < vertical_subseq_set.size(); j++) {
+						if(vertical_subseq_set.get(i) != vertical_subseq_set.get(j) && PieceSequence.isOtherIdSequenceOneDiffOnEdge(vertical_subseq_set.get(i).getSequence(), vertical_subseq_set.get(j).getSequence())) {
+							check = false;
+							vertical_subseq_set.clear();
+							max_common_seq_vertical++;
+							break;
+						}
+					}
+					if(!check) {
+						break;
+					}
+				}
+			}
+		
+		print_string = "\nFound size of the maximum repeated subsequence in x-axis: " + max_common_seq_horizontal;
+		if (dimension_amount == 2) 
+			print_string = print_string + " and in Y-axiss: " + max_common_seq_vertical;
+		file.println(print_string);
 		
 		print_string = "The starting sequence was split into: " + horizontal_subseq_set.size() + " elements in the X axis";
 		if(dimension_amount == 2)

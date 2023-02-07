@@ -27,6 +27,7 @@ public class DominoOneDim {
 		Piece[] subseq;
 		
 		
+		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss_SSS");  
 		LocalDateTime now = LocalDateTime.now();  
 		String print_string = "";
@@ -84,6 +85,7 @@ public class DominoOneDim {
 
 		
 		int max_common_seq_vertical = 1, max_common_seq_horizontal = 1;
+		boolean check;
 		for(int i = 0; i < max_values.size(); i++) {
 			if (max_values.get(i) >= xAxissAmount + yAxissAmount && max_values.get(i) - (xAxissAmount + yAxissAmount) > max_common_seq_vertical)
 				max_common_seq_vertical = max_values.get(i) - (xAxissAmount + yAxissAmount);
@@ -91,36 +93,80 @@ public class DominoOneDim {
 				max_common_seq_horizontal = max_values.get(i);
 		}
 			
-		print_string = "\nFound size of the maximum repeated subsequence in x-axis: " + max_common_seq_horizontal;
-		if (dimension_amount == 2) 
-			print_string = print_string + " and in Y-axiss: " + max_common_seq_vertical;
-		file.println(print_string);
+
 
 		if (max_common_seq_vertical < yAxissAmount) max_common_seq_vertical++;  //subsequences become deterministic when their length >= K + 2 and lesser than axiss length, K is the greatest repeated subsequence in sequence
 		if (max_common_seq_horizontal < xAxissAmount) max_common_seq_horizontal++;
 		if (max_common_seq_vertical < yAxissAmount) max_common_seq_vertical++;  
 		if (max_common_seq_horizontal < xAxissAmount) max_common_seq_horizontal++;
 		
+		check = false;
 		
-		
-		for(int y = 0; y < yAxissAmount; y++)
-			for(int x = max_common_seq_horizontal - 1; x < xAxissAmount; x++) {
-				subseq = new Piece[max_common_seq_horizontal];
-				for(int i = 0; i < max_common_seq_horizontal; i++) {
-					subseq[i] = solution_table[x - max_common_seq_horizontal + 1 + i][y];
-				}
-				horizontal_subseq_set.add(new PieceSequence(subseq, true));
-			}
-			
-		if(dimension_amount == 2)
-			for(int x = 0; x < xAxissAmount; x++)
-				for(int y = max_common_seq_vertical - 1; y < yAxissAmount; y++) {
-					subseq = new Piece[max_common_seq_vertical];
-					for(int i = 0; i < max_common_seq_vertical; i++) {
-						subseq[i] = solution_table[x][y - max_common_seq_vertical + 1 + i];
+		while(check == false) {// check if pesymistic case
+			for(int y = 0; y < yAxissAmount; y++)
+				for(int x = max_common_seq_horizontal - 1; x < xAxissAmount; x++) {
+					subseq = new Piece[max_common_seq_horizontal];
+					for(int i = 0; i < max_common_seq_horizontal; i++) {
+						subseq[i] = solution_table[x - max_common_seq_horizontal + 1 + i][y];
 					}
-					vertical_subseq_set.add(new PieceSequence(subseq, false));
+					horizontal_subseq_set.add(new PieceSequence(subseq, true));
 				}
+			if(max_common_seq_horizontal == xAxissAmount)
+				break;
+			
+			check = true;
+			for(int i = 0; i < horizontal_subseq_set.size(); i++) {
+				for(int j = i + 1; j < horizontal_subseq_set.size(); j++) {
+					if(PieceSequence.isOtherIdSequenceOneDiffOnEdge(horizontal_subseq_set.get(i).getSequence(), horizontal_subseq_set.get(j).getSequence())) {
+
+						check = false;
+						horizontal_subseq_set.clear();
+						max_common_seq_horizontal++;
+						break;
+					}
+				}
+				if(!check) {
+					break;
+				}
+			}
+		}
+		check = false;
+		
+		if(dimension_amount == 2)
+			while(check == false) {
+				for(int x = 0; x < xAxissAmount; x++)
+					for(int y = max_common_seq_vertical - 1; y < yAxissAmount; y++) {
+						subseq = new Piece[max_common_seq_vertical];
+						for(int i = 0; i < max_common_seq_vertical; i++) {
+							subseq[i] = solution_table[x][y - max_common_seq_vertical + 1 + i];
+						}
+						vertical_subseq_set.add(new PieceSequence(subseq, false));
+					}
+				if(max_common_seq_vertical == yAxissAmount)
+					break;
+				
+				check = true;
+				for(int i = 0; i < vertical_subseq_set.size(); i++) {
+					for(int j = i + 1; j < vertical_subseq_set.size(); j++) {
+						if(PieceSequence.isOtherIdSequenceOneDiffOnEdge(vertical_subseq_set.get(i).getSequence(), vertical_subseq_set.get(j).getSequence())) {
+							check = false;
+							vertical_subseq_set.clear();
+							max_common_seq_vertical++;
+							break;
+						}
+					}
+					if(!check) {
+						break;
+					}
+				}
+			}
+		
+		
+		
+		print_string = "\nFound size of the maximum repeated subsequence in x-axis: " + max_common_seq_horizontal;
+		if (dimension_amount == 2) 
+			print_string = print_string + " and in Y-axiss: " + max_common_seq_vertical;
+		file.println(print_string);
 		
 		print_string = "The starting sequence was split into: " + horizontal_subseq_set.size() + " elements in the X axis";
 		if(dimension_amount == 2)
@@ -158,6 +204,7 @@ public class DominoOneDim {
 		Collections.shuffle(horizontal_subseq_set);
 		Collections.shuffle(vertical_subseq_set);
 		
+		
 		PieceSequence chosen_sqe, matched_seq, new_seq;
 		Piece[] piece_seq;
 		boolean match_up;
@@ -189,6 +236,8 @@ public class DominoOneDim {
 						new_seq = new PieceSequence(piece_seq, true);
 						horizontal_subseq_set.remove(i);
 						i=-1;
+
+						file.println(horizontal_subseq_set.size() + "  " + horizontal_subseq_ready_set.size() + "  " + new_seq.getSequence().length);
 
 						if(new_seq.getSequence().length == xAxissAmount) {
 			                //if new subsequence has maximum possible length 
@@ -223,7 +272,7 @@ public class DominoOneDim {
 						new_seq = new PieceSequence(piece_seq, true);
 						horizontal_subseq_set.remove(i);
 						i=-1;
-
+						file.println(horizontal_subseq_set.size() + "  " + horizontal_subseq_ready_set.size() + "  " + new_seq.getSequence().length);
 						if(new_seq.getSequence().length == xAxissAmount) {
 			                //if new subsequence has maximum possible length 
 			                //then it's stored in separate subsequence set for
@@ -240,7 +289,7 @@ public class DominoOneDim {
 			}
 		else
 			horizontal_subseq_ready_set.addAll(horizontal_subseq_set);
-		
+
 		//vertical sequence combining
 		
 		if(max_common_seq_vertical < yAxissAmount)

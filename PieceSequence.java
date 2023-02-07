@@ -55,4 +55,24 @@ public class PieceSequence {
 			return false;
 		return true;
 	}
+	
+	static public boolean isOtherIdSequenceOneDiffOnEdge(Piece[] oryginal_sequence, Piece[] checked_sequence) {
+	 	int count = 0;
+		if(oryginal_sequence.length == checked_sequence.length) {
+			for(int i = 0; i < oryginal_sequence.length; i++) {
+				if(oryginal_sequence[i].getId() != checked_sequence[i].getId()) {
+					count++;
+					if(count == 2) 
+						return false;
+				}
+			}
+		}
+		else
+			return false;
+		if(oryginal_sequence[0].getId() != checked_sequence[0].getId() && oryginal_sequence[oryginal_sequence.length - 1].getId() == checked_sequence[checked_sequence.length - 1].getId() ||
+				oryginal_sequence[0].getId() == checked_sequence[0].getId() && oryginal_sequence[oryginal_sequence.length - 1].getId() != checked_sequence[checked_sequence.length - 1].getId())
+			return true;
+
+		return false;
+	}
 }
